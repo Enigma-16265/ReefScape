@@ -9,7 +9,9 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.epilogue.Logged;
 
+@Logged
 public class CoralIntake extends SubsystemBase {
     public static final int    kIntakeMotorCanId = 24;
     public static final double kCoralGearRatio   = 1.0 / 5.0;

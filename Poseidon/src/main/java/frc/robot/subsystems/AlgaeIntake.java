@@ -72,4 +72,14 @@ public class AlgaeIntake extends SubsystemBase
     {
         m_intakeSparkMax.set( speed );
     }
+
+    public double getSpeedRPM()
+    {
+        return m_intakeEncoder.getVelocity();
+    }
+
+    public double getEncoderPosition()
+    {
+        return m_intakeEncoder.getPosition();
+    }
 }

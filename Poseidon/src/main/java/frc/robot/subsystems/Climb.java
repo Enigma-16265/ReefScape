@@ -9,7 +9,9 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.epilogue.Logged;
 
+@Logged
 public class Climb extends SubsystemBase {
     // Adjust this CAN ID and gear ratio for your climb mechanism.
     public static final int    kClimbMotorCanId = 7;

@@ -8,11 +8,13 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.epilogue.Logged;
 
+@Logged
 public class CoralPivot extends SubsystemBase {
     public static final int kPivotMotorCanId = 23;
-    // With a 66:1 gear reduction, the output is 1/66th of the motor's rotations.
-    public static final double kPivotGearRatio = 1.0 / 66.0;
+    // With a 66:1 gear reduction, the output is 1/60th of the motor's rotations.
+    public static final double kPivotGearRatio = 1.0 / 60.0;
 
     // PID tuning parameters for position control (to be tuned)
     private static final double kP_pos = 0.0;
