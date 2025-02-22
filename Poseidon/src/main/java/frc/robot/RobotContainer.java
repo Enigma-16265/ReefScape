@@ -16,6 +16,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.subsystems.AlgaeIntake;
+import frc.robot.subsystems.AlgaePivot;
+import frc.robot.subsystems.Climb;
+import frc.robot.subsystems.CoralIntake;
+import frc.robot.subsystems.CoralPivot;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 import swervelib.SwerveInputStream;
@@ -83,6 +89,14 @@ public class RobotContainer
                                                                                                               (Math.PI *
                                                                                                                2))
                                                                                .headingWhile(true);
+
+  // Subsystems
+  AlgaeIntake algaeIntake = new AlgaeIntake();
+  AlgaePivot  algaePivot  = new AlgaePivot();
+  Climb       climb       = new Climb();
+  CoralIntake coralIntake = new CoralIntake();
+  CoralPivot  coralPivot  = new CoralPivot();
+  Elevator    elevator    = new Elevator();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
