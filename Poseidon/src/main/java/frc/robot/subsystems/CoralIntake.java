@@ -68,4 +68,15 @@ public class CoralIntake extends SubsystemBase {
     public void setSpeed(double speed) {
         m_intakeSparkMax.set(speed);
     }
+
+    public double getSpeedRPM()
+    {
+        return m_intakeEncoder.getVelocity();
+    }
+
+    public double getEncoderPosition()
+    {
+        return m_intakeEncoder.getPosition();
+    }
+
 }

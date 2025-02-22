@@ -68,4 +68,14 @@ public class Climb extends SubsystemBase {
     public void setSpeed(double speed) {
         m_climbSparkMax.set(speed);
     }
+
+    public double getSpeedRPM()
+    {
+        return m_climbEncoder.getVelocity();
+    }
+
+    public double getEncoderPosition()
+    {
+        return m_climbEncoder.getPosition();
+    }    
 }

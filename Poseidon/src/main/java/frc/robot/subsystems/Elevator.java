@@ -138,4 +138,15 @@ public class Elevator extends SubsystemBase {
         }
         m_masterMotor.set(speed);
     }
+
+    public double getSpeedRPM()
+    {
+        return m_elevatorEncoder.getVelocity();
+    }
+
+    public double getEncoderPosition()
+    {
+        return m_elevatorEncoder.getPosition();
+    }
+
 }

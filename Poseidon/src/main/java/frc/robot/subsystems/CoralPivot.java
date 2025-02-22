@@ -130,4 +130,15 @@ public class CoralPivot extends SubsystemBase {
         }
         m_pivotSparkMax.set(speed);
     }
+
+    public double getSpeedRPM()
+    {
+        return m_pivotEncoder.getVelocity();
+    }
+
+    public double getEncoderPosition()
+    {
+        return m_pivotEncoder.getPosition();
+    }
+
 }
