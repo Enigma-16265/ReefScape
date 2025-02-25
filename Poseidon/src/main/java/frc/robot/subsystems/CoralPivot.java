@@ -12,22 +12,18 @@ import edu.wpi.first.epilogue.Logged;
 
 @Logged
 public class CoralPivot extends SubsystemBase {
-    public static final int kPivotMotorCanId = 23;
-    // With a 66:1 gear reduction, the output is 1/60th of the motor's rotations.
-    public static final double kPivotGearRatio = 1.0 / 60.0;
+    public static final int kPivotMotorCanId     = 23;
+    public static final double kPivotGearRatio   = 1.0 / 60.0;
+    public static final double kNoLoadRpm        = 5500 * kPivotGearRatio;
+    public static final double kMinRotPos        = 0.0;
+    public static final double kMaxRotPos        = 20.0;
+    public static final double kCurrentThreshold = 20.0;
     
     // PID tuning parameters for position control (to be tuned)
     private static final double kP_pos = 0.0;
     private static final double kI_pos = 0.0;
     private static final double kD_pos = 0.0;
-    
-    // Safety limits for pivot position (in output rotations after gearing)
-    private static final double kMinPosition = -1.0; // adjust as needed
-    private static final double kMaxPosition = 1.0;  // adjust as needed
-    
-    // Current threshold in amps to protect the gears
-    private static final double kCurrentThreshold = 20.0;
-    
+   
     // Flags to enable/disable safety checks
     private boolean encoderCheckEnabled = true;
     private boolean currentCheckEnabled = true;
@@ -89,10 +85,10 @@ public class CoralPivot extends SubsystemBase {
         if (encoderCheckEnabled) {
             double currentPosition = m_pivotEncoder.getPosition();
             // Prevent driving further past the physical limits.
-            if (targetPosition > currentPosition && currentPosition >= kMaxPosition) {
+            if (targetPosition > currentPosition && currentPosition >= kMaxRotPos) {
                 targetPosition = currentPosition;
             }
-            if (targetPosition < currentPosition && currentPosition <= kMinPosition) {
+            if (targetPosition < currentPosition && currentPosition <= kMinRotPos) {
                 targetPosition = currentPosition;
             }
         }
@@ -105,7 +101,7 @@ public class CoralPivot extends SubsystemBase {
         }
         
         // Clamp the final target position just before commanding the motor.
-        targetPosition = MathUtil.clamp(targetPosition, kMinPosition, kMaxPosition);
+        targetPosition = MathUtil.clamp(targetPosition, kMinRotPos, kMaxRotPos);
         m_pivotClosedLoopController.setReference(targetPosition, ControlType.kPosition);
     }
     

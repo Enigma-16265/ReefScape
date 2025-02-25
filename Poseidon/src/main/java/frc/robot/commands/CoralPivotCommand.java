@@ -6,32 +6,32 @@ import frc.robot.subsystems.CoralPivot;
 
 public class CoralPivotCommand extends Command {
     private final CoralPivot m_pivot;
-    private final DoubleSupplier m_positionSupplier;
+    private final DoubleSupplier m_speedSupplier;
 
     /**
-     * Creates a new RunCoralPivot command.
+     * Creates a new CoralPivotCommand.
      * 
      * @param pivot the CoralPivot subsystem.
-     * @param positionSupplier a supplier that provides a pivot position (e.g., between -1.0 and 1.0)
+     * @param speedSupplier a supplier that provides a speed value between -1.0 and 1.0.
      */
-    public CoralPivotCommand(CoralPivot pivot, DoubleSupplier positionSupplier) {
+    public CoralPivotCommand(CoralPivot pivot, DoubleSupplier speedSupplier) {
         m_pivot = pivot;
-        m_positionSupplier = positionSupplier;
+        m_speedSupplier = speedSupplier;
         addRequirements(m_pivot);
     }
 
     @Override
     public void execute() {
-        // Retrieve the desired pivot position from the supplier.
-        double targetPosition = m_positionSupplier.getAsDouble();
-        // Command the CoralPivot subsystem to move to the target position using closed-loop control.
-        m_pivot.setPivotPosition(targetPosition);
+        // Retrieve the desired speed value from the supplier.
+        double targetSpeed = m_speedSupplier.getAsDouble();
+        // Command the CoralPivot subsystem to run at the target speed.
+        m_pivot.setSpeed(targetSpeed);
     }
 
     @Override
     public void end(boolean interrupted) {
-        // Stop or hold the pivot when the command ends.
-        m_pivot.setPivotPosition(0.0);
+        // Stop the pivot when the command ends or is interrupted.
+        m_pivot.setSpeed(0.0);
     }
 
     @Override
