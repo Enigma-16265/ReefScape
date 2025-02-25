@@ -90,6 +90,8 @@ public class RobotContainer
                                                                                                                2))
                                                                                .headingWhile(true);
 
+  final CommandXboxController mechanicXbox = new CommandXboxController(1);
+
   // Subsystems
   AlgaeIntake algaeIntake = new AlgaeIntake();
   AlgaePivot  algaePivot  = new AlgaePivot();
@@ -166,6 +168,14 @@ public class RobotContainer
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.rightBumper().onTrue(Commands.none());
     }
+
+    // Controller 2 mapping
+    // AlgaePivot  - L/R bumper  : R set's position in Revs to 0, L set's position in Revs to 25
+    // AlgaeIntake - L/R trigger : L provides speed to intake, R provides speed to outtake
+    // Elevator    - Left Thumb  : Up provides speed to lift, Down provides speed to drop
+    // CoralPivot  - Right Thumb : Up provides speed to rotate forward, Down provides speed to rotate backwards
+    // CoralIntake - X/A buttons : X provides constant speed to intake, A provides constant speed to outtake
+    // Climb       - Y/B buttons : Y provides constant speed to climb, B provides constant speed to let down
 
   }
 

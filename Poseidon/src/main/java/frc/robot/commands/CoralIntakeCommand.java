@@ -25,13 +25,13 @@ public class CoralIntakeCommand extends Command {
         double speedValue = m_speedSupplier.getAsDouble();
         // Map the speed value to target RPM using the no-load RPM defined in CoralIntake.
         double targetRPM = speedValue * CoralIntake.kNoLoadRpm;
-        m_intake.setIntakeSpeed(targetRPM);
+        m_intake.setVelocity(targetRPM);
     }
 
     @Override
     public void end(boolean interrupted) {
         // Stop the intake when the command ends or is interrupted.
-        m_intake.setIntakeSpeed(0.0);
+        m_intake.setVelocity(0.0);
     }
 
     @Override

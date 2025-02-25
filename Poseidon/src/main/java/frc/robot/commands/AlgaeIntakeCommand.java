@@ -27,13 +27,13 @@ public class AlgaeIntakeCommand extends Command {
         // Map the speed value to a target RPM. For example, a value of 1.0 will command kNoLoadRpm.
         double targetRPM = speedValue * AlgaeIntake.kNoLoadRpm;
         // Command the intake to run at the target RPM using closed-loop control.
-        m_intake.setIntakeSpeed(targetRPM);
+        m_intake.setVelocity(targetRPM);
     }
 
     @Override
     public void end(boolean interrupted) {
         // Stop the intake when the command ends or is interrupted.
-        m_intake.setIntakeSpeed(0.0);
+        m_intake.setVelocity(0.0);
     }
 
     @Override

@@ -16,11 +16,19 @@ public class CoralIntake extends SubsystemBase {
     public static final int    kIntakeMotorCanId = 24;
     public static final double kCoralGearRatio   = 1.0 / 5.0;
     public static final double kNoLoadRpm        = 5500 * kCoralGearRatio;
+    public static final double kCurrentThreshold = 20.0;
+    
+    // Define position limits if applicable. Adjust these as needed.
+    public static final double kMinPos = 0.0;
+    public static final double kMaxPos = 20.0;
 
     // PID tuning parameters (to be tuned later)
     private static final double kP = 0.0;
     private static final double kI = 0.0;
     private static final double kD = 0.0;
+
+    // Safety flags
+    private boolean currentCheckEnabled = false;
 
     private final SparkMax       m_intakeSparkMax;
     private final SparkMaxConfig m_intakeSparkMaxConfig;
@@ -30,13 +38,11 @@ public class CoralIntake extends SubsystemBase {
 
     public CoralIntake() {
         m_intakeSparkMaxConfig = new SparkMaxConfig();
-        // Configure the encoder for position conversion if needed.
+        // Configure the encoder conversion factors.
         m_intakeSparkMaxConfig.encoder.positionConversionFactor(kCoralGearRatio);
-        // Configure the encoder to report velocity in RPM.
-        // For example, if the encoder outputs rotations per second, multiplying by 60 converts to RPM.
         m_intakeSparkMaxConfig.encoder.velocityConversionFactor(kCoralGearRatio * 60.0);
 
-        // Set PID parameters and output limits for the closed-loop controller.
+        // Set PID parameters and output limits.
         m_intakeSparkMaxConfig.closedLoop.pid(kP, kI, kD);
         m_intakeSparkMaxConfig.closedLoop.outputRange(-1.0, 1.0);
 
@@ -46,37 +52,85 @@ public class CoralIntake extends SubsystemBase {
         m_intakeEncoder = m_intakeSparkMax.getEncoder();
         m_intakeEncoder.setPosition(0.0);
 
-        // Obtain the closed-loop controller from the SparkMax.
         m_intakePIDController = m_intakeSparkMax.getClosedLoopController();
     }
 
     /**
-     * Sets the intake speed in RPM using the PID controller on the SparkMax.
+     * Enables or disables the current draw safety check.
      *
-     * @param rpm the desired intake speed in RPM
+     * @param enabled true to enable, false to disable.
      */
-    public void setIntakeSpeed(double rpm) {
-        double cappedRPM = MathUtil.clamp(rpm, -kNoLoadRpm, kNoLoadRpm);
-        m_intakePIDController.setReference(cappedRPM, ControlType.kVelocity);
+    public void setCurrentCheckEnabled(boolean enabled) {
+        currentCheckEnabled = enabled;
     }
 
     /**
-     * Directly sets the motor output without PID control.
+     * Directly sets the motor output while enforcing a current draw safety check.
      *
      * @param speed the motor output (-1.0 to 1.0)
      */
     public void setSpeed(double speed) {
+        if (currentCheckEnabled) {
+            double currentDraw = m_intakeSparkMax.getOutputCurrent();
+            if (currentDraw > kCurrentThreshold) {
+                // If current is too high, stop the motor.
+                m_intakeSparkMax.set(0.0);
+                return;
+            }
+        }
         m_intakeSparkMax.set(speed);
     }
 
-    public double getSpeedRPM()
-    {
+    /**
+     * Sets the intake position using the PID controller while enforcing a current draw safety check.
+     * For a roller mechanism, no encoder position check is performed. The desired position is clamped 
+     * between kMinPos and kMaxPos, and if the current draw is too high, the command is overridden 
+     * to hold the current position.
+     *
+     * @param position the desired intake position (in rotations)
+     */
+    public void setPosition(double position) {
+        double safePosition = position;
+    
+        if (currentCheckEnabled) {
+            double currentDraw = m_intakeSparkMax.getOutputCurrent();
+            if (currentDraw > kCurrentThreshold) {
+                // If current is too high, hold the current position.
+                safePosition = m_intakeEncoder.getPosition();
+            }
+        }
+        
+        // Clamp the final safe position between kMinPos and kMaxPos.
+        safePosition = MathUtil.clamp(safePosition, kMinPos, kMaxPos);
+        m_intakePIDController.setReference(safePosition, ControlType.kPosition);
+    }    
+
+    /**
+     * Sets the intake velocity using the PID controller while enforcing a current draw safety check.
+     * If the current draw exceeds the threshold, the motor is commanded to 0 velocity.
+     * The commanded velocity is also clamped within the allowable no-load RPM range.
+     *
+     * @param velocity the desired intake velocity in RPM
+     */
+    public void setVelocity(double velocity) {
+        double safeVelocity = velocity;
+
+        if (currentCheckEnabled) {
+            double currentDraw = m_intakeSparkMax.getOutputCurrent();
+            if (currentDraw > kCurrentThreshold) {
+                safeVelocity = 0.0;
+            }
+        }
+
+        safeVelocity = MathUtil.clamp(safeVelocity, -kNoLoadRpm, kNoLoadRpm);
+        m_intakePIDController.setReference(safeVelocity, ControlType.kVelocity);
+    }
+
+    public double getSpeedRPM() {
         return m_intakeEncoder.getVelocity();
     }
 
-    public double getEncoderPosition()
-    {
+    public double getEncoderPosition() {
         return m_intakeEncoder.getPosition();
     }
-
 }

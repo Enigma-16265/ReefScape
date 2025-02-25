@@ -13,25 +13,21 @@ import edu.wpi.first.epilogue.Logged;
 @Logged
 public class AlgaePivot extends SubsystemBase
 {
-    public static final int kPivotMotorCanId = 5;
-    // With a 27:1 gear reduction, the output is 1/27th of the motor’s rotations.
-    public static final double kPivotGearRatio = 1.0 / 27.0;
+    public static final int    kPivotMotorCanId  = 5;
+    public static final double kPivotGearRatio   = 1.0 / 27.0;
+    public static final double kNoLoadRpm        = 5500 * kPivotGearRatio;
+    public static final double kMinRotPos        = 0.0;
+    public static final double kMaxRotPos        = 20.0;
+    public static final double kCurrentThreshold = 20.0;
 
     // PID tuning parameters for position control (to be tuned)
     private static final double kP_pos = 0.0;
     private static final double kI_pos = 0.0;
     private static final double kD_pos = 0.0;
 
-    // Safety limits for pivot position (in output rotations after gearing)
-    private static final double kMinPosition = -1.0; // adjust as needed
-    private static final double kMaxPosition = 1.0;  // adjust as needed
-
-    // Current threshold in amps to protect the gears
-    private static final double kCurrentThreshold = 20.0;
-
     // Flags to enable/disable safety checks
-    private boolean encoderCheckEnabled = true;
-    private boolean currentCheckEnabled = true;
+    private boolean encoderCheckEnabled = false;
+    private boolean currentCheckEnabled = false;
 
     private final SparkMax m_pivotSparkMax;
     public final SparkMaxConfig m_pivotSparkMaxConfig;
@@ -39,7 +35,8 @@ public class AlgaePivot extends SubsystemBase
     private final RelativeEncoder m_pivotEncoder;
     private final SparkClosedLoopController m_pivotClosedLoopController;
 
-    public AlgaePivot() {
+    public AlgaePivot()
+    {
         m_pivotSparkMaxConfig = new SparkMaxConfig();
         // Configure conversion factors: position conversion factor accounts for gear reduction.
         m_pivotSparkMaxConfig.encoder.positionConversionFactor(kPivotGearRatio);
@@ -78,58 +75,88 @@ public class AlgaePivot extends SubsystemBase
     }
 
     /**
-     * Sets the pivot position using the PID controller while enforcing safety limits.
-     * This method clamps the desired position between kMinPosition and kMaxPosition.
-     * When encoder checking is enabled, it also verifies that the target position is in the
-     * same direction as the current motion and that the mechanism is not already at a limit.
-     *
-     * @param targetPosition the desired pivot position (in rotations)
-     */
-    public void setPivotPosition( double targetPosition )
-    {
-        // Clamp the target position to the overall safe range.
-        double safeTarget = MathUtil.clamp(targetPosition, kMinPosition, kMaxPosition);
-        
-        if (encoderCheckEnabled) {
-            double currentPosition = m_pivotEncoder.getPosition();
-            // Prevent driving further past the physical limits.
-            if (safeTarget > currentPosition && currentPosition >= kMaxPosition) {
-                // Instead of open-loop 0, hold the current position.
-                safeTarget = currentPosition;
-            }
-            if (safeTarget < currentPosition && currentPosition <= kMinPosition) {
-                safeTarget = currentPosition;
-            }
-        }
-    
-        if (currentCheckEnabled) {
-            double currentDraw = m_pivotSparkMax.getOutputCurrent();
-            if (currentDraw > kCurrentThreshold) {
-                // Hold the current position when current is too high.
-                safeTarget = m_pivotEncoder.getPosition();
-            }
-        }
-    
-        // Command the motor to move to the (potentially adjusted) safe target using PID control.
-        m_pivotClosedLoopController.setReference(safeTarget, ControlType.kPosition);
-    }    
-
-    /**
      * Directly sets the motor output while enforcing a current draw safety check.
      *
      * @param speed the motor output (-1.0 to 1.0)
      */
-    public void setSpeed(double speed) {
-        // Check the current draw if safety is enabled.
-        if (currentCheckEnabled) {
+    public void setSpeed(double speed)
+    {
+        if (currentCheckEnabled)
+        {
             double currentDraw = m_pivotSparkMax.getOutputCurrent();
-            if (currentDraw > kCurrentThreshold) {
+            if (currentDraw > kCurrentThreshold)
+            {
                 // If the current is too high, stop the motor.
                 m_pivotSparkMax.set(0.0);
                 return;
             }
         }
         m_pivotSparkMax.set(speed);
+    }
+
+    /**
+     * Sets the pivot position using the PID controller while enforcing safety limits.
+     * This method first applies the safety checks, then clamps the final value
+     * between kMinRotPos and kMaxRotPos just before commanding the motor.
+     *
+     * @param position the desired pivot position (in rotations)
+     */
+    public void setPosition(double position)
+    {
+        double targetPosition = position;
+        
+        if (encoderCheckEnabled)
+        {
+            double currentPosition = m_pivotEncoder.getPosition();
+            // Prevent driving further past the physical limits.
+            if (targetPosition > currentPosition && currentPosition >= kMaxRotPos)
+            {
+                targetPosition = currentPosition;
+            }
+            else if (targetPosition < currentPosition && currentPosition <= kMinRotPos)
+            {
+                targetPosition = currentPosition;
+            }
+        }
+    
+        if (currentCheckEnabled)
+        {
+            double currentDraw = m_pivotSparkMax.getOutputCurrent();
+            if (currentDraw > kCurrentThreshold)
+            {
+                // Hold the current position when current is too high.
+                targetPosition = m_pivotEncoder.getPosition();
+            }
+        }
+    
+        // Clamp the target position just before commanding the motor.
+        targetPosition = MathUtil.clamp(targetPosition, kMinRotPos, kMaxRotPos);
+        m_pivotClosedLoopController.setReference(targetPosition, ControlType.kPosition);
+    }
+
+    /**
+     * Sets the pivot velocity using the PID controller while enforcing current draw safety.
+     * If the current draw exceeds the threshold, the motor is commanded to 0 velocity.
+     * The final velocity is clamped between -kNoLoadRpm and kNoLoadRpm just before command.
+     *
+     * @param velocity the desired velocity (in RPM)
+     */
+    public void setVelocity(double velocity)
+    {
+        double targetVelocity = velocity;
+        
+        if (currentCheckEnabled)
+        {
+            double currentDraw = m_pivotSparkMax.getOutputCurrent();
+            if (currentDraw > kCurrentThreshold)
+            {
+                targetVelocity = 0.0;
+            }
+        }
+        
+        // Clamp the final velocity just before commanding the motor.
+        targetVelocity = MathUtil.clamp(targetVelocity, -kNoLoadRpm, kNoLoadRpm);
+        m_pivotClosedLoopController.setReference(targetVelocity, ControlType.kVelocity);
     }
 
     public double getSpeedRPM()
@@ -142,4 +169,8 @@ public class AlgaePivot extends SubsystemBase
         return m_pivotEncoder.getPosition();
     }
 
+    public double getCurrent()
+    {
+        return m_pivotSparkMax.getOutputCurrent();
+    }
 }
