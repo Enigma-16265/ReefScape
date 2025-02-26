@@ -6,36 +6,36 @@ import frc.robot.subsystems.Elevator;
 
 public class ElevatorCommand extends Command {
     private final Elevator m_elevator;
-    private final DoubleSupplier m_positionSupplier;
+    private final DoubleSupplier m_speedSupplier;
 
     /**
      * Creates a new ElevatorCommand.
-     *
+     * 
      * @param elevator the Elevator subsystem.
-     * @param positionSupplier a supplier that provides the desired elevator position (in rotations)
+     * @param speedSupplier a supplier that provides a speed value between -1.0 and 1.0.
      */
-    public ElevatorCommand(Elevator elevator, DoubleSupplier positionSupplier) {
+    public ElevatorCommand(Elevator elevator, DoubleSupplier speedSupplier) {
         m_elevator = elevator;
-        m_positionSupplier = positionSupplier;
+        m_speedSupplier = speedSupplier;
         addRequirements(m_elevator);
     }
 
     @Override
     public void execute() {
-        // Get the desired target position from the supplier.
-        double targetPosition = m_positionSupplier.getAsDouble();
-        // Command the elevator subsystem to move to the target position.
-        m_elevator.setElevatorPosition(targetPosition);
+        // Retrieve the speed value from the supplier.
+        double speed = m_speedSupplier.getAsDouble();
+        // Command the elevator motor with the supplied speed.
+        m_elevator.setSpeed(speed);
     }
 
     @Override
     public void end(boolean interrupted) {
-        // Stop the elevator by setting open-loop speed to zero.
+        // Stop the elevator when the command ends or is interrupted.
         m_elevator.setSpeed(0.0);
     }
 
     @Override
     public boolean isFinished() {
-        return false; // Runs continuously until interrupted.
+        return false; // This command runs until interrupted.
     }
 }

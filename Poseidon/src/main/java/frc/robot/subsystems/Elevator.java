@@ -12,22 +12,18 @@ import edu.wpi.first.epilogue.Logged;
 
 @Logged
 public class Elevator extends SubsystemBase {
-    public static final int kElevatorMasterCanId = 21;
-    public static final int kElevatorFollowerCanId = 22;
-    // With a 5:1 gear reduction, the output rotates at 1/5th of the motor's rotations.
-    public static final double kElevatorGearRatio = 1.0 / 5.0;
+    public static final int    kElevatorMasterCanId   = 21;
+    public static final int    kElevatorFollowerCanId = 22;
+    public static final double kElevatorGearRatio     = 1.0 / 5.0;
+    public static final double kNoLoadRpm             = 5500 * kElevatorGearRatio;
+    public static final double kMinRotPos             = 0.0;
+    public static final double kMaxRotPos             = 20.0;
+    public static final double kCurrentThreshold      = 20.0;
 
     // PID tuning parameters for position control (to be tuned)
     private static final double kP = 0.0;
     private static final double kI = 0.0;
     private static final double kD = 0.0;
-
-    // Safety limits for elevator position (in output rotations after gearing)
-    private static final double kMinPosition = 0.0;  // adjust as needed
-    private static final double kMaxPosition = 10.0; // adjust as needed
-
-    // Current threshold in amps to protect the mechanism
-    private static final double kCurrentThreshold = 20.0;
 
     // Flags to enable/disable safety checks
     private boolean encoderCheckEnabled = true;
@@ -43,7 +39,8 @@ public class Elevator extends SubsystemBase {
     private final RelativeEncoder m_elevatorEncoder;
     private final SparkClosedLoopController m_elevatorClosedLoopController;
 
-    public Elevator() {
+    public Elevator()
+    {
         // Create and configure the master config.
         m_elevatorMasterConfig = new SparkMaxConfig();
         m_elevatorMasterConfig.encoder.positionConversionFactor(kElevatorGearRatio);
@@ -88,55 +85,87 @@ public class Elevator extends SubsystemBase {
     }
 
     /**
-     * Sets the elevator position using the PID controller while enforcing safety limits.
-     * The desired position is clamped between kMinPosition and kMaxPosition.
-     * When encoder checking is enabled, the target is compared to the current position,
-     * and if the mechanism is already at a limit, the command is modified to hold position.
-     *
-     * @param targetPosition the desired elevator position (in rotations)
-     */
-    public void setElevatorPosition(double targetPosition) {
-        // Clamp the target position to the overall safe range.
-        double safeTarget = MathUtil.clamp(targetPosition, kMinPosition, kMaxPosition);
-
-        if (encoderCheckEnabled) {
-            double currentPosition = m_elevatorEncoder.getPosition();
-            // Prevent commanding movement further past the safe limits.
-            if (safeTarget > currentPosition && currentPosition >= kMaxPosition) {
-                safeTarget = currentPosition;
-            }
-            if (safeTarget < currentPosition && currentPosition <= kMinPosition) {
-                safeTarget = currentPosition;
-            }
-        }
-
-        if (currentCheckEnabled) {
-            double currentDraw = m_masterMotor.getOutputCurrent();
-            if (currentDraw > kCurrentThreshold) {
-                // If current is too high, hold the current position.
-                safeTarget = m_elevatorEncoder.getPosition();
-            }
-        }
-
-        // Command the master motor to move to the (potentially adjusted) safe target using PID control.
-        m_elevatorClosedLoopController.setReference(safeTarget, ControlType.kPosition);
-    }
-
-    /**
-     * Directly sets the master motor output while enforcing a current draw safety check.
-     * The follower will mirror the master.
+     * Directly sets the motor output while enforcing a current draw safety check.
      *
      * @param speed the motor output (-1.0 to 1.0)
      */
-    public void setSpeed(double speed) {
-        if (currentCheckEnabled) {
+    public void setSpeed( double speed )
+    {
+        if ( currentCheckEnabled )
+        {
             double currentDraw = m_masterMotor.getOutputCurrent();
-            if (currentDraw > kCurrentThreshold) {
-                m_masterMotor.set(0.0);
+            if ( currentDraw > kCurrentThreshold )
+            {
+                m_masterMotor.set( 0.0 );
                 return;
             }
         }
-        m_masterMotor.set(speed);
+        m_masterMotor.set( speed );
+    }
+
+    /**
+     * Sets the pivot position using the PID controller while enforcing safety limits.
+     * This method first applies the safety checks, then clamps the final value
+     * between kMinRotPos and kMaxRotPos just before commanding the motor.
+     *
+     * @param position the desired pivot position (in rotations)
+     */
+    public void setPosition(double position)
+    {
+        double targetPosition = position;
+        
+        if (encoderCheckEnabled)
+        {
+            double currentPosition = m_elevatorEncoder.getPosition();
+            // Prevent driving further past the physical limits.
+            if (targetPosition > currentPosition && currentPosition >= kMaxRotPos)
+            {
+                targetPosition = currentPosition;
+            }
+            else if (targetPosition < currentPosition && currentPosition <= kMinRotPos)
+            {
+                targetPosition = currentPosition;
+            }
+        }
+    
+        if (currentCheckEnabled)
+        {
+            double currentDraw = m_masterMotor.getOutputCurrent();
+            if (currentDraw > kCurrentThreshold)
+            {
+                // Hold the current position when current is too high.
+                targetPosition = m_elevatorEncoder.getPosition();
+            }
+        }
+    
+        // Clamp the target position just before commanding the motor.
+        targetPosition = MathUtil.clamp(targetPosition, kMinRotPos, kMaxRotPos);
+        m_elevatorClosedLoopController.setReference(targetPosition, ControlType.kPosition);
+    }
+
+    /**
+     * Sets the pivot velocity using the PID controller while enforcing current draw safety.
+     * If the current draw exceeds the threshold, the motor is commanded to 0 velocity.
+     * The final velocity is clamped between -kNoLoadRpm and kNoLoadRpm just before command.
+     *
+     * @param velocity the desired velocity (in RPM)
+     */
+    public void setVelocity(double velocity)
+    {
+        double targetVelocity = velocity;
+        
+        if (currentCheckEnabled)
+        {
+            double currentDraw = m_masterMotor.getOutputCurrent();
+            if (currentDraw > kCurrentThreshold)
+            {
+                targetVelocity = 0.0;
+            }
+        }
+        
+        // Clamp the final velocity just before commanding the motor.
+        targetVelocity = MathUtil.clamp(targetVelocity, -kNoLoadRpm, kNoLoadRpm);
+        m_elevatorClosedLoopController.setReference(targetVelocity, ControlType.kVelocity);
     }
 
     public double getSpeedRPM()
@@ -147,6 +176,11 @@ public class Elevator extends SubsystemBase {
     public double getEncoderPosition()
     {
         return m_elevatorEncoder.getPosition();
+    }
+
+    public double getCurrent()
+    {
+        return m_masterMotor.getOutputCurrent();
     }
 
 }
