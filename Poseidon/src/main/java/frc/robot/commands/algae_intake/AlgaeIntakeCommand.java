@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.algae_intake;
 
 import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.Command;

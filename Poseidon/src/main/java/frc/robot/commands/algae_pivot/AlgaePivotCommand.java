@@ -1,37 +1,36 @@
-package frc.robot.commands;
+package frc.robot.commands.algae_pivot;
 
 import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.AlgaePivot;
 
-public class ElevatorCommand extends Command {
-    private final Elevator m_elevator;
+public class AlgaePivotCommand extends Command {
+    private final AlgaePivot m_pivot;
     private final DoubleSupplier m_speedSupplier;
 
     /**
-     * Creates a new ElevatorCommand.
-     * 
-     * @param elevator the Elevator subsystem.
+     * Creates a new RunAlgaePivot command.
+     * @param pivot the AlgaePivot subsystem.
      * @param speedSupplier a supplier that provides a speed value between -1.0 and 1.0.
      */
-    public ElevatorCommand(Elevator elevator, DoubleSupplier speedSupplier) {
-        m_elevator = elevator;
+    public AlgaePivotCommand(AlgaePivot pivot, DoubleSupplier speedSupplier) {
+        m_pivot = pivot;
         m_speedSupplier = speedSupplier;
-        addRequirements(m_elevator);
+        addRequirements(m_pivot);
     }
 
     @Override
     public void execute() {
         // Retrieve the speed value from the supplier.
         double speed = m_speedSupplier.getAsDouble();
-        // Command the elevator motor with the supplied speed.
-        m_elevator.setSpeed(speed);
+        // Command the pivot motor with the supplied speed.
+        m_pivot.setSpeed(speed);
     }
 
     @Override
     public void end(boolean interrupted) {
-        // Stop the elevator when the command ends or is interrupted.
-        m_elevator.setSpeed(0.0);
+        // Stop the pivot when the command ends or is interrupted.
+        m_pivot.setSpeed(0.0);
     }
 
     @Override
