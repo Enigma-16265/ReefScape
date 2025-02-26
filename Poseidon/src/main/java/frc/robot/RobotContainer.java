@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
@@ -100,11 +102,61 @@ public class RobotContainer
   CoralPivot  coralPivot  = new CoralPivot();
   Elevator    elevator    = new Elevator();
 
+  // ------------------
+  // Command Members (Controller 2)
+  // ------------------
+  Command algaeIntakeCommand;
+  Command algaePivotLowPositionCommand;
+  Command algaePivotHighPositionCommand;
+  Command elevatorCommand;
+  Command coralPivotCommand;
+  Command coralIntakeIntakeCommand;
+  Command coralIntakeOuttakeCommand;
+  Command climbUpCommand;
+  Command climbDownCommand;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer()
   {
+
+    // ------------------
+    // Initialize Commands for Controller 2
+    // ------------------
+    // AlgaePivot: Left bumper sets position to 25 revs; Right bumper sets position to 0 revs.
+    algaePivotLowPositionCommand = new InstantCommand(
+        () -> algaePivot.setPosition(25.0), algaePivot);
+    algaePivotHighPositionCommand = new InstantCommand(
+        () -> algaePivot.setPosition(0.0), algaePivot);
+
+    // AlgaeIntake: Use left/right trigger difference as speed input.
+    algaeIntakeCommand = new frc.robot.commands.algae_intake.AlgaeIntakeCommand(
+        algaeIntake,
+        () -> mechanicXbox.getLeftTriggerAxis() - mechanicXbox.getRightTriggerAxis());
+
+    // Elevator: Use left thumbstick Y axis for elevator speed.
+    elevatorCommand = new frc.robot.commands.elevator.ElevatorCommand(
+        elevator,
+        () -> mechanicXbox.getLeftY());
+
+    // CoralPivot: Use right thumbstick Y axis for pivot speed.
+    coralPivotCommand = new frc.robot.commands.coral_pivot.CoralPivotCommand(
+        coralPivot,
+        () -> mechanicXbox.getRightY());
+
+    // CoralIntake: X button provides constant intake speed (e.g. +0.5), A button constant outtake speed (-0.5).
+    coralIntakeIntakeCommand = new RunCommand(
+        () -> coralIntake.setSpeed(0.5), coralIntake);
+    coralIntakeOuttakeCommand = new RunCommand(
+        () -> coralIntake.setSpeed(-0.5), coralIntake);
+
+    // Climb: Y button provides constant climbing speed (+0.5), B button provides constant lowering speed (-0.5).
+    climbUpCommand = new RunCommand(
+        () -> climb.setSpeed(0.5), climb);
+    climbDownCommand = new RunCommand(
+        () -> climb.setSpeed(-0.5), climb);
+
     // Configure the trigger bindings
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -176,6 +228,35 @@ public class RobotContainer
     // CoralPivot  - Right Thumb : Up provides speed to rotate forward, Down provides speed to rotate backwards
     // CoralIntake - X/A buttons : X provides constant speed to intake, A provides constant speed to outtake
     // Climb       - Y/B buttons : Y provides constant speed to climb, B provides constant speed to let down
+
+    // ------------------
+    // Bind Controller 2 Buttons to Commands
+    // ------------------
+
+    // AlgaePivot preset positions: 
+    // Left bumper sets pivot to 25 revolutions, Right bumper sets pivot to 0.
+    mechanicXbox.leftBumper().onTrue(algaePivotLowPositionCommand);
+    mechanicXbox.rightBumper().onTrue(algaePivotHighPositionCommand);
+
+    // AlgaeIntake: Left and right triggers control intake/outtake speed.
+    mechanicXbox.leftTrigger().whileTrue(algaeIntakeCommand);
+    mechanicXbox.rightTrigger().whileTrue(algaeIntakeCommand);
+
+    // Elevator: Set default command to continuously control elevator speed.
+    elevator.setDefaultCommand(elevatorCommand);
+
+    // CoralPivot: Set default command to continuously control pivot speed.
+    coralPivot.setDefaultCommand(coralPivotCommand);
+
+    // CoralIntake: 
+    // X button for intake at constant speed, A button for outtake at constant speed.
+    mechanicXbox.x().whileTrue(coralIntakeIntakeCommand);
+    mechanicXbox.a().whileTrue(coralIntakeOuttakeCommand);
+
+    // Climb: 
+    // Y button for climbing up, B button for lowering.
+    mechanicXbox.y().whileTrue(climbUpCommand);
+    mechanicXbox.b().whileTrue(climbDownCommand);
 
   }
 
