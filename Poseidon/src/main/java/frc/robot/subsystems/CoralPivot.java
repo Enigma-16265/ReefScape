@@ -8,9 +8,9 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.epilogue.Logged;
+//import edu.wpi.first.epilogue.Logged;
 
-@Logged
+//@Logged
 public class CoralPivot extends SubsystemBase {
     public static final int kPivotMotorCanId     = 23;
     public static final double kPivotGearRatio   = 1.0 / 60.0;

@@ -8,9 +8,9 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.epilogue.Logged;
+//import edu.wpi.first.epilogue.Logged;
 
-@Logged
+//@Logged
 public class AlgaeIntake extends SubsystemBase {
     public static final int    kIntakeMotorCanId = 20;
     public static final double kIntakeGearRatio  = 1.0 / 5.0;
