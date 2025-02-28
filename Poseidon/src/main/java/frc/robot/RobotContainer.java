@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.algae_pivot.AlgaePivotPositionCommand;
+import frc.robot.commands.climb.ClimbHoldCommand;
 import frc.robot.subsystems.AlgaeIntake;
 import frc.robot.subsystems.AlgaePivot;
 import frc.robot.subsystems.Climb;
@@ -110,10 +111,8 @@ public class RobotContainer
   Command algaePivotHighPositionCommand;
   Command elevatorCommand;
   Command coralPivotCommand;
-  Command coralIntakeIntakeCommand;
-  Command coralIntakeOuttakeCommand;
-  Command climbUpCommand;
-  Command climbDownCommand;
+  Command coralIntakeCommand;
+  Command climbCommand;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -140,21 +139,27 @@ public class RobotContainer
         () -> mechanicXbox.getLeftY());
 
     // CoralPivot: Use right thumbstick Y axis for pivot speed.
-    coralPivotCommand = new frc.robot.commands.coral_pivot.CoralPivotCommand(
+    coralPivotCommand = new frc.robot.commands.coral_pivot.CoralPivotHoldCommand(
         coralPivot,
         () -> mechanicXbox.getRightY());
 
     // CoralIntake: X button provides constant intake speed (e.g. +0.5), A button constant outtake speed (-0.5).
-    coralIntakeIntakeCommand = new RunCommand(
-        () -> coralIntake.setSpeed(0.5), coralIntake);
-    coralIntakeOuttakeCommand = new RunCommand(
-        () -> coralIntake.setSpeed(-0.5), coralIntake);
+    coralIntakeCommand = new frc.robot.commands.coral_intake.CoralIntakeHoldCommand(
+      coralIntake,
+        mechanicXbox.x()::getAsBoolean,   // Up button (X)
+        mechanicXbox.a()::getAsBoolean,   // Down button (A)
+        0.5,                  // Climb up speed
+        -0.5                              // Lower speed
+    );
 
     // Climb: Y button provides constant climbing speed (+0.5), B button provides constant lowering speed (-0.5).
-    climbUpCommand = new RunCommand(
-        () -> climb.setSpeed(0.5), climb);
-    climbDownCommand = new RunCommand(
-        () -> climb.setSpeed(-0.5), climb);
+    climbCommand = new frc.robot.commands.climb.ClimbHoldCommand(
+        climb,
+        mechanicXbox.y()::getAsBoolean,   // Up button (Y)
+        mechanicXbox.b()::getAsBoolean,   // Down button (B)
+        0.5,                      // Climb up speed
+        -0.5                              // Lower speed
+    );
 
     // Configure the trigger bindings
     configureBindings();
@@ -249,13 +254,11 @@ public class RobotContainer
 
     // CoralIntake: 
     // X button for intake at constant speed, A button for outtake at constant speed.
-    mechanicXbox.x().whileTrue(coralIntakeIntakeCommand);
-    mechanicXbox.a().whileTrue(coralIntakeOuttakeCommand);
+    coralIntake.setDefaultCommand( coralIntakeCommand );
 
     // Climb: 
     // Y button for climbing up, B button for lowering.
-    mechanicXbox.y().whileTrue(climbUpCommand);
-    mechanicXbox.b().whileTrue(climbDownCommand);
+    climb.setDefaultCommand(climbCommand);
 
   }
 

@@ -8,6 +8,7 @@ public class ElevatorHoldCommand extends Command {
     private final Elevator m_elevator;
     private final DoubleSupplier m_speedSupplier;
     private double m_holdPosition; // The last known position to hold
+    private static final double DEADBAND = 0.1; // Adjust as needed
 
     /**
      * Creates a new ElevatorHoldCommand.
@@ -31,7 +32,7 @@ public class ElevatorHoldCommand extends Command {
     public void execute() {
         double speed = m_speedSupplier.getAsDouble();
         // Use a deadband to decide between manual control and holding position.
-        if (Math.abs(speed) > 0.1) {
+        if (Math.abs(speed) > DEADBAND) {
             // When there is significant input, drive the elevator using open-loop control.
             m_elevator.setSpeed(speed);
             // Update the hold position as you move.

@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.Map;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -10,9 +12,25 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 //import edu.wpi.first.epilogue.Logged;
+import frc.logging.DataNetworkTableLog;
 
 //@Logged
-public class CoralIntake extends SubsystemBase {
+public class CoralIntake extends SubsystemBase
+{
+    private static final DataNetworkTableLog tlmLog =
+        new DataNetworkTableLog( 
+            "Subsystems.CoralIntake.tlm",
+            Map.of( "velocity", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
+                    "position", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
+                    "current", DataNetworkTableLog.COLUMN_TYPE.DOUBLE ) );
+
+    private static final DataNetworkTableLog cmdLog =
+        new DataNetworkTableLog( 
+            "Subsystems.CoralIntake.cmd",
+            Map.of( "velocity", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
+                    "position", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
+                    "speed", DataNetworkTableLog.COLUMN_TYPE.DOUBLE ) );
+    
     public static final int    kIntakeMotorCanId = 24;
     public static final double kCoralGearRatio   = 1.0 / 5.0;
     public static final double kNoLoadRpm        = 5500 * kCoralGearRatio;
@@ -74,7 +92,12 @@ public class CoralIntake extends SubsystemBase {
                 return;
             }
         }
+
+        cmdLog.publish( "speed", speed );
+
         m_intakeSparkMax.set(speed);
+
+        logValues();
     }
 
     /**
@@ -95,8 +118,12 @@ public class CoralIntake extends SubsystemBase {
                 safePosition = m_intakeEncoder.getPosition();
             }
         }
+
+        cmdLog.publish( "position", position );
         
         m_intakePIDController.setReference(safePosition, ControlType.kPosition);
+
+        logValues();
     }    
 
     /**
@@ -117,19 +144,31 @@ public class CoralIntake extends SubsystemBase {
         }
 
         safeVelocity = MathUtil.clamp(safeVelocity, -kNoLoadRpm, kNoLoadRpm);
+
+        cmdLog.publish( "velocity", velocity );
+
         m_intakePIDController.setReference(safeVelocity, ControlType.kVelocity);
+
+        logValues();
     }
 
-    public double getSpeedRPM() {
+    public double getVelocity() {
         return m_intakeEncoder.getVelocity();
     }
 
-    public double getEncoderPosition() {
+    public double getPosition() {
         return m_intakeEncoder.getPosition();
     }
 
     public double getCurrent() {
         return m_intakeSparkMax.getOutputCurrent();
+    }
+
+    public void logValues()
+    {
+        tlmLog.publish( "velocity", m_intakeEncoder.getVelocity() );
+        tlmLog.publish( "position", m_intakeEncoder.getPosition() );
+        tlmLog.publish( "current",  m_intakeSparkMax.getOutputCurrent() );
     }
 
 }
