@@ -131,7 +131,7 @@ public class RobotContainer
         () -> algaePivot.setPosition(0.0), algaePivot);
 
     // AlgaeIntake: Use left/right trigger difference as speed input.
-    algaeIntakeCommand = new frc.robot.commands.algae_intake.AlgaeIntakeCommand(
+    algaeIntakeCommand = new frc.robot.commands.algae_intake.AlgaeIntakeDutyCommand(
         algaeIntake,
         () -> mechanicXbox.getLeftTriggerAxis() - mechanicXbox.getRightTriggerAxis());
 
