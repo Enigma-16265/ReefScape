@@ -12,16 +12,24 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.epilogue.Logged;
 
 @Logged
-public class Climb extends SubsystemBase {
+public class Climb extends SubsystemBase
+{
     // Adjust this CAN ID and gear ratio for your climb mechanism.
-    public static final int    kClimbMotorCanId = 7;
-    public static final double kClimbGearRatio  = 1.0 / 100.0; // Example: 1:1 gear ratio
-    public static final double kMaxClimbRPM     = 5000; // Example maximum RPM under no-load
+    public static final int    kClimbMotorCanId  = 7;
+    public static final double kClimbGearRatio   = 1.0 / 100.0; // Example: 1:1 gear ratio
+    public static final double kNoLoadRpm        = 5500 * kClimbGearRatio;
+    public static final double kMinRotPos        = 0.0;
+    public static final double kMaxRotPos        = 20.0;
+    public static final double kCurrentThreshold = 20.0;
 
     // PID tuning parameters (to be tuned later)
     private static final double kP = 0.0;
     private static final double kI = 0.0;
     private static final double kD = 0.0;
+
+    // Flags to enable/disable safety checks
+    private boolean encoderCheckEnabled = false;
+    private boolean currentCheckEnabled = false;
 
     private final SparkMax       m_climbSparkMax;
     private final SparkMaxConfig m_climbSparkMaxConfig;
@@ -29,7 +37,8 @@ public class Climb extends SubsystemBase {
     private final RelativeEncoder           m_climbEncoder;
     private final SparkClosedLoopController m_climbPIDController;
 
-    public Climb() {
+    public Climb()
+    {
         m_climbSparkMaxConfig = new SparkMaxConfig();
         // Configure the encoder conversion factors.
         m_climbSparkMaxConfig.encoder.positionConversionFactor(kClimbGearRatio);
@@ -50,23 +59,105 @@ public class Climb extends SubsystemBase {
     }
 
     /**
-     * Sets the climb speed in RPM using the PID controller.
-     * The target RPM is clamped to be within ±kMaxClimbRPM.
+     * Enables or disables the encoder safety check.
      *
-     * @param rpm the desired climb speed in RPM
+     * @param enabled true to enable, false to disable.
      */
-    public void setClimbSpeed(double rpm) {
-        double cappedRPM = MathUtil.clamp(rpm, -kMaxClimbRPM, kMaxClimbRPM);
-        m_climbPIDController.setReference(cappedRPM, ControlType.kVelocity);
+    public void setEncoderCheckEnabled(boolean enabled) {
+        encoderCheckEnabled = enabled;
     }
 
     /**
-     * Directly sets the motor output without PID control.
+     * Enables or disables the current draw safety check.
+     *
+     * @param enabled true to enable, false to disable.
+     */
+    public void setCurrentCheckEnabled(boolean enabled) {
+        currentCheckEnabled = enabled;
+    }
+
+    /**
+     * Directly sets the motor output while enforcing a current draw safety check.
      *
      * @param speed the motor output (-1.0 to 1.0)
      */
-    public void setSpeed(double speed) {
-        m_climbSparkMax.set(speed);
+    public void setSpeed( double speed )
+    {
+        if ( currentCheckEnabled )
+        {
+            double currentDraw = m_climbSparkMax.getOutputCurrent();
+            if ( currentDraw > kCurrentThreshold )
+            {
+                m_climbSparkMax.set( 0.0 );
+                return;
+            }
+        }
+        m_climbSparkMax.set( speed );
+    }
+
+    /**
+     * Sets the pivot position using the PID controller while enforcing safety limits.
+     * This method first applies the safety checks, then clamps the final value
+     * between kMinRotPos and kMaxRotPos just before commanding the motor.
+     *
+     * @param position the desired pivot position (in rotations)
+     */
+    public void setPosition(double position)
+    {
+        double targetPosition = position;
+        
+        if (encoderCheckEnabled)
+        {
+            double currentPosition = m_climbEncoder.getPosition();
+            // Prevent driving further past the physical limits.
+            if (targetPosition > currentPosition && currentPosition >= kMaxRotPos)
+            {
+                targetPosition = currentPosition;
+            }
+            else if (targetPosition < currentPosition && currentPosition <= kMinRotPos)
+            {
+                targetPosition = currentPosition;
+            }
+        }
+    
+        if (currentCheckEnabled)
+        {
+            double currentDraw = m_climbSparkMax.getOutputCurrent();
+            if (currentDraw > kCurrentThreshold)
+            {
+                // Hold the current position when current is too high.
+                targetPosition = m_climbEncoder.getPosition();
+            }
+        }
+    
+        // Clamp the target position just before commanding the motor.
+        targetPosition = MathUtil.clamp(targetPosition, kMinRotPos, kMaxRotPos);
+        m_climbPIDController.setReference(targetPosition, ControlType.kPosition);
+    }
+
+    /**
+     * Sets the pivot velocity using the PID controller while enforcing current draw safety.
+     * If the current draw exceeds the threshold, the motor is commanded to 0 velocity.
+     * The final velocity is clamped between -kNoLoadRpm and kNoLoadRpm just before command.
+     *
+     * @param velocity the desired velocity (in RPM)
+     */
+    public void setVelocity(double velocity)
+    {
+        double targetVelocity = velocity;
+        
+        if (currentCheckEnabled)
+        {
+            double currentDraw = m_climbSparkMax.getOutputCurrent();
+            if (currentDraw > kCurrentThreshold)
+            {
+                targetVelocity = 0.0;
+            }
+        }
+        
+        // Clamp the final velocity just before commanding the motor.
+        targetVelocity = MathUtil.clamp(targetVelocity, -kNoLoadRpm, kNoLoadRpm);
+        m_climbPIDController.setReference(targetVelocity, ControlType.kVelocity);
     }
 
     public double getSpeedRPM()
@@ -77,5 +168,11 @@ public class Climb extends SubsystemBase {
     public double getEncoderPosition()
     {
         return m_climbEncoder.getPosition();
-    }    
+    }
+
+    public double getCurrent()
+    {
+        return m_climbSparkMax.getOutputCurrent();
+    }
+
 }

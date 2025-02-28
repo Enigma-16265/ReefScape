@@ -17,10 +17,6 @@ public class CoralIntake extends SubsystemBase {
     public static final double kCoralGearRatio   = 1.0 / 5.0;
     public static final double kNoLoadRpm        = 5500 * kCoralGearRatio;
     public static final double kCurrentThreshold = 20.0;
-    
-    // Define position limits if applicable. Adjust these as needed.
-    public static final double kMinPos = 0.0;
-    public static final double kMaxPos = 20.0;
 
     // PID tuning parameters (to be tuned later)
     private static final double kP = 0.0;
@@ -100,8 +96,6 @@ public class CoralIntake extends SubsystemBase {
             }
         }
         
-        // Clamp the final safe position between kMinPos and kMaxPos.
-        safePosition = MathUtil.clamp(safePosition, kMinPos, kMaxPos);
         m_intakePIDController.setReference(safePosition, ControlType.kPosition);
     }    
 
@@ -133,4 +127,9 @@ public class CoralIntake extends SubsystemBase {
     public double getEncoderPosition() {
         return m_intakeEncoder.getPosition();
     }
+
+    public double getCurrent() {
+        return m_intakeSparkMax.getOutputCurrent();
+    }
+
 }

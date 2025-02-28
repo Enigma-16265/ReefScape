@@ -79,19 +79,18 @@ public class AlgaePivot extends SubsystemBase
      *
      * @param speed the motor output (-1.0 to 1.0)
      */
-    public void setSpeed(double speed)
+    public void setSpeed( double speed )
     {
-        if (currentCheckEnabled)
+        if ( currentCheckEnabled )
         {
             double currentDraw = m_pivotSparkMax.getOutputCurrent();
-            if (currentDraw > kCurrentThreshold)
+            if ( currentDraw > kCurrentThreshold )
             {
-                // If the current is too high, stop the motor.
-                m_pivotSparkMax.set(0.0);
+                m_pivotSparkMax.set( 0.0 );
                 return;
             }
         }
-        m_pivotSparkMax.set(speed);
+        m_pivotSparkMax.set( speed );
     }
 
     /**
@@ -173,4 +172,5 @@ public class AlgaePivot extends SubsystemBase
     {
         return m_pivotSparkMax.getOutputCurrent();
     }
+    
 }

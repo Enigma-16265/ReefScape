@@ -25,8 +25,8 @@ public class CoralPivot extends SubsystemBase {
     private static final double kD_pos = 0.0;
    
     // Flags to enable/disable safety checks
-    private boolean encoderCheckEnabled = true;
-    private boolean currentCheckEnabled = true;
+    private boolean encoderCheckEnabled = false;
+    private boolean currentCheckEnabled = false;
     
     private final SparkMax m_pivotSparkMax;
     public final SparkMaxConfig m_pivotSparkMaxConfig;
@@ -71,6 +71,25 @@ public class CoralPivot extends SubsystemBase {
     public void setCurrentCheckEnabled(boolean enabled) {
         currentCheckEnabled = enabled;
     }
+
+    /**
+     * Directly sets the motor output while enforcing a current draw safety check.
+     *
+     * @param speed the motor output (-1.0 to 1.0)
+     */
+    public void setSpeed( double speed )
+    {
+        if ( currentCheckEnabled )
+        {
+            double currentDraw = m_pivotSparkMax.getOutputCurrent();
+            if ( currentDraw > kCurrentThreshold )
+            {
+                m_pivotSparkMax.set( 0.0 );
+                return;
+            }
+        }
+        m_pivotSparkMax.set( speed );
+    }
     
     /**
      * Sets the pivot position using the PID controller while enforcing safety limits.
@@ -88,14 +107,16 @@ public class CoralPivot extends SubsystemBase {
             if (targetPosition > currentPosition && currentPosition >= kMaxRotPos) {
                 targetPosition = currentPosition;
             }
-            if (targetPosition < currentPosition && currentPosition <= kMinRotPos) {
+            else if (targetPosition < currentPosition && currentPosition <= kMinRotPos) {
                 targetPosition = currentPosition;
             }
         }
         
-        if (currentCheckEnabled) {
+        if (currentCheckEnabled)
+        {
             double currentDraw = m_pivotSparkMax.getOutputCurrent();
-            if (currentDraw > kCurrentThreshold) {
+            if (currentDraw > kCurrentThreshold)
+            {
                 targetPosition = m_pivotEncoder.getPosition();
             }
         }
@@ -124,25 +145,8 @@ public class CoralPivot extends SubsystemBase {
         }
         
         // Compute kNoLoadRpm from the pivot's gear ratio for clamping.
-        double kNoLoadRpm = 5500 * kPivotGearRatio;
         targetVelocity = MathUtil.clamp(targetVelocity, -kNoLoadRpm, kNoLoadRpm);
         m_pivotClosedLoopController.setReference(targetVelocity, ControlType.kVelocity);
-    }
-    
-    /**
-     * Directly sets the motor output while enforcing a current draw safety check.
-     *
-     * @param speed the motor output (-1.0 to 1.0)
-     */
-    public void setSpeed(double speed) {
-        if (currentCheckEnabled) {
-            double currentDraw = m_pivotSparkMax.getOutputCurrent();
-            if (currentDraw > kCurrentThreshold) {
-                m_pivotSparkMax.set(0.0);
-                return;
-            }
-        }
-        m_pivotSparkMax.set(speed);
     }
     
     public double getSpeedRPM() {
