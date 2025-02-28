@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.algae_pivot.AlgaePivotPositionCommand;
+import frc.robot.commands.climb.ClimbHoldCommand;
 import frc.robot.subsystems.AlgaeIntake;
 import frc.robot.subsystems.AlgaePivot;
 import frc.robot.subsystems.Climb;
@@ -112,8 +113,7 @@ public class RobotContainer
   Command coralPivotCommand;
   Command coralIntakeIntakeCommand;
   Command coralIntakeOuttakeCommand;
-  Command climbUpCommand;
-  Command climbDownCommand;
+  Command climbCommand;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -151,10 +151,13 @@ public class RobotContainer
         () -> coralIntake.setSpeed(-0.5), coralIntake);
 
     // Climb: Y button provides constant climbing speed (+0.5), B button provides constant lowering speed (-0.5).
-    climbUpCommand = new RunCommand(
-        () -> climb.setSpeed(0.5), climb);
-    climbDownCommand = new RunCommand(
-        () -> climb.setSpeed(-0.5), climb);
+    climbCommand = new ClimbHoldCommand(
+        climb,
+        mechanicXbox.y()::getAsBoolean,   // Up button (Y)
+        mechanicXbox.b()::getAsBoolean,   // Down button (B)
+        0.5,                      // Climb up speed
+        -0.5                              // Lower speed
+    );
 
     // Configure the trigger bindings
     configureBindings();
@@ -254,8 +257,7 @@ public class RobotContainer
 
     // Climb: 
     // Y button for climbing up, B button for lowering.
-    mechanicXbox.y().whileTrue(climbUpCommand);
-    mechanicXbox.b().whileTrue(climbDownCommand);
+    climb.setDefaultCommand(climbCommand);
 
   }
 

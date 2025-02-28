@@ -186,6 +186,8 @@ public class AlgaePivot extends SubsystemBase
         cmdLog.publish( "velocity", velocity );
 
         m_pivotClosedLoopController.setReference(targetVelocity, ControlType.kVelocity);
+
+        logValues();
     }
 
     public double getVelocity() {
