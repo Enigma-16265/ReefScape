@@ -168,12 +168,12 @@ public class Elevator extends SubsystemBase {
         m_elevatorClosedLoopController.setReference(targetVelocity, ControlType.kVelocity);
     }
 
-    public double getSpeedRPM()
+    public double getVelocity()
     {
         return m_elevatorEncoder.getVelocity();
     }
 
-    public double getEncoderPosition()
+    public double getPosition()
     {
         return m_elevatorEncoder.getPosition();
     }

@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -136,7 +135,7 @@ public class RobotContainer
         () -> mechanicXbox.getLeftTriggerAxis() - mechanicXbox.getRightTriggerAxis());
 
     // Elevator: Use left thumbstick Y axis for elevator speed.
-    elevatorCommand = new frc.robot.commands.elevator.ElevatorCommand(
+    elevatorCommand = new frc.robot.commands.elevator.ElevatorHoldCommand(
         elevator,
         () -> mechanicXbox.getLeftY());
 
