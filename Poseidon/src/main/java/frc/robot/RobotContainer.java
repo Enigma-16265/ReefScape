@@ -140,7 +140,7 @@ public class RobotContainer
         () -> mechanicXbox.getLeftY());
 
     // CoralPivot: Use right thumbstick Y axis for pivot speed.
-    coralPivotCommand = new frc.robot.commands.coral_pivot.CoralPivotDutyCommand(
+    coralPivotCommand = new frc.robot.commands.coral_pivot.CoralPivotHoldCommand(
         coralPivot,
         () -> mechanicXbox.getRightY());
 

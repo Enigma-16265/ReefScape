@@ -4,7 +4,8 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CoralPivot;
 
-public class CoralPivotDutyCommand extends Command {
+public class CoralPivotDutyCommand extends Command
+{
     private final CoralPivot m_pivot;
     private final DoubleSupplier m_speedSupplier;
 
