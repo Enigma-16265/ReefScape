@@ -173,4 +173,5 @@ public class AlgaeIntake extends SubsystemBase
         tlmLog.publish( "position", m_intakeEncoder.getPosition() );
         tlmLog.publish( "current",  m_intakeSparkMax.getOutputCurrent() );
     }
+
 }
