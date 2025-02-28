@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.Map;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -8,10 +10,26 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.logging.DataNetworkTableLog;
 //import edu.wpi.first.epilogue.Logged;
 
 //@Logged
-public class AlgaeIntake extends SubsystemBase {
+public class AlgaeIntake extends SubsystemBase
+{
+    private static final DataNetworkTableLog dataLogTlm =
+        new DataNetworkTableLog( 
+            "Subsystems.AlgaeIntake.tlm",
+            Map.of( "velocity", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
+                    "position", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
+                    "current", DataNetworkTableLog.COLUMN_TYPE.DOUBLE ) );
+
+    private static final DataNetworkTableLog dataLogCmd =
+    new DataNetworkTableLog( 
+        "Subsystems.AlgaeIntake.cmd",
+        Map.of( "velocity", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
+                "position", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
+                "speed", DataNetworkTableLog.COLUMN_TYPE.DOUBLE ) );
+
     public static final int    kIntakeMotorCanId = 20;
     public static final double kIntakeGearRatio  = 1.0 / 5.0;
     public static final double kNoLoadRpm        = 5500 * kIntakeGearRatio;
@@ -67,7 +85,8 @@ public class AlgaeIntake extends SubsystemBase {
      *
      * @param speed the motor output (-1.0 to 1.0)
      */
-    public void setSpeed(double speed) {
+    public void setSpeed( double speed )
+    {
         if (currentCheckEnabled) {
             double currentDraw = m_intakeSparkMax.getOutputCurrent();
             if (currentDraw > kCurrentThreshold) {
@@ -75,7 +94,12 @@ public class AlgaeIntake extends SubsystemBase {
                 return;
             }
         }
-        m_intakeSparkMax.set(speed);
+
+        dataLogCmd.publish( "speed", speed );
+
+        m_intakeSparkMax.set( speed );
+
+        logValues();
     }
 
     /**
@@ -96,8 +120,12 @@ public class AlgaeIntake extends SubsystemBase {
                 safePosition = m_intakeEncoder.getPosition();
             }
         }
+
+        dataLogCmd.publish( "position", position );
         
         m_intakePIDController.setReference(safePosition, ControlType.kPosition);
+
+        logValues();
     }  
 
     /**
@@ -119,18 +147,30 @@ public class AlgaeIntake extends SubsystemBase {
         }
         
         targetRPM = MathUtil.clamp(targetRPM, -kNoLoadRpm, kNoLoadRpm);
+
+        dataLogCmd.publish( "velocity", rpm );
+
         m_intakePIDController.setReference(targetRPM, ControlType.kVelocity);
+
+        logValues();
     }
 
-    public double getSpeedRPM() {
+    public double getVelocity() {
         return m_intakeEncoder.getVelocity();
     }
 
-    public double getEncoderPosition() {
+    public double getPosition() {
         return m_intakeEncoder.getPosition();
     }
 
     public double getCurrent() {
         return m_intakeSparkMax.getOutputCurrent();
+    }
+
+    public void logValues()
+    {
+        dataLogTlm.publish( "velocity", m_intakeEncoder.getVelocity() );
+        dataLogTlm.publish( "position", m_intakeEncoder.getPosition() );
+        dataLogTlm.publish( "current",  m_intakeSparkMax.getOutputCurrent() );
     }
 }
