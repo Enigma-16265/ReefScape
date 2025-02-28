@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.algae_pivot.AlgaePivotPositionCommand;
 import frc.robot.subsystems.AlgaeIntake;
 import frc.robot.subsystems.AlgaePivot;
 import frc.robot.subsystems.Climb;
@@ -125,10 +126,9 @@ public class RobotContainer
     // Initialize Commands for Controller 2
     // ------------------
     // AlgaePivot: Left bumper sets position to 25 revs; Right bumper sets position to 0 revs.
-    algaePivotLowPositionCommand = new InstantCommand(
-        () -> algaePivot.setPosition(25.0), algaePivot);
-    algaePivotHighPositionCommand = new InstantCommand(
-        () -> algaePivot.setPosition(0.0), algaePivot);
+    algaePivotLowPositionCommand = new AlgaePivotPositionCommand(algaePivot, 25.0);
+    algaePivotHighPositionCommand = new AlgaePivotPositionCommand(algaePivot, 0.0);
+
 
     // AlgaeIntake: Use left/right trigger difference as speed input.
     algaeIntakeCommand = new frc.robot.commands.algae_intake.AlgaeIntakeDutyCommand(

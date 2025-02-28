@@ -4,7 +4,7 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.AlgaePivot;
 
-public class AlgaePivotCommand extends Command {
+public class AlgaePivotDutyCommand extends Command {
     private final AlgaePivot m_pivot;
     private final DoubleSupplier m_speedSupplier;
 
@@ -13,7 +13,7 @@ public class AlgaePivotCommand extends Command {
      * @param pivot the AlgaePivot subsystem.
      * @param speedSupplier a supplier that provides a speed value between -1.0 and 1.0.
      */
-    public AlgaePivotCommand(AlgaePivot pivot, DoubleSupplier speedSupplier) {
+    public AlgaePivotDutyCommand(AlgaePivot pivot, DoubleSupplier speedSupplier) {
         m_pivot = pivot;
         m_speedSupplier = speedSupplier;
         addRequirements(m_pivot);
