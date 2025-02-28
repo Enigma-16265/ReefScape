@@ -16,14 +16,14 @@ import frc.logging.DataNetworkTableLog;
 //@Logged
 public class AlgaeIntake extends SubsystemBase
 {
-    private static final DataNetworkTableLog dataLogTlm =
+    private static final DataNetworkTableLog tlmLog =
         new DataNetworkTableLog( 
             "Subsystems.AlgaeIntake.tlm",
             Map.of( "velocity", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
                     "position", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
                     "current", DataNetworkTableLog.COLUMN_TYPE.DOUBLE ) );
 
-    private static final DataNetworkTableLog dataLogCmd =
+    private static final DataNetworkTableLog cmdLog =
     new DataNetworkTableLog( 
         "Subsystems.AlgaeIntake.cmd",
         Map.of( "velocity", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
@@ -95,7 +95,7 @@ public class AlgaeIntake extends SubsystemBase
             }
         }
 
-        dataLogCmd.publish( "speed", speed );
+        cmdLog.publish( "speed", speed );
 
         m_intakeSparkMax.set( speed );
 
@@ -121,7 +121,7 @@ public class AlgaeIntake extends SubsystemBase
             }
         }
 
-        dataLogCmd.publish( "position", position );
+        cmdLog.publish( "position", position );
         
         m_intakePIDController.setReference(safePosition, ControlType.kPosition);
 
@@ -134,10 +134,10 @@ public class AlgaeIntake extends SubsystemBase
      * the target velocity is set to 0 RPM. The final value is then clamped
      * between -kNoLoadRpm and kNoLoadRpm.
      *
-     * @param rpm the desired intake velocity in RPM
+     * @param velocity the desired intake velocity in RPM
      */
-    public void setVelocity(double rpm) {
-        double targetRPM = rpm;
+    public void setVelocity(double velocity) {
+        double targetRPM = velocity;
         
         if (currentCheckEnabled) {
             double currentDraw = m_intakeSparkMax.getOutputCurrent();
@@ -148,7 +148,7 @@ public class AlgaeIntake extends SubsystemBase
         
         targetRPM = MathUtil.clamp(targetRPM, -kNoLoadRpm, kNoLoadRpm);
 
-        dataLogCmd.publish( "velocity", rpm );
+        cmdLog.publish( "velocity", velocity );
 
         m_intakePIDController.setReference(targetRPM, ControlType.kVelocity);
 
@@ -169,8 +169,8 @@ public class AlgaeIntake extends SubsystemBase
 
     public void logValues()
     {
-        dataLogTlm.publish( "velocity", m_intakeEncoder.getVelocity() );
-        dataLogTlm.publish( "position", m_intakeEncoder.getPosition() );
-        dataLogTlm.publish( "current",  m_intakeSparkMax.getOutputCurrent() );
+        tlmLog.publish( "velocity", m_intakeEncoder.getVelocity() );
+        tlmLog.publish( "position", m_intakeEncoder.getPosition() );
+        tlmLog.publish( "current",  m_intakeSparkMax.getOutputCurrent() );
     }
 }
