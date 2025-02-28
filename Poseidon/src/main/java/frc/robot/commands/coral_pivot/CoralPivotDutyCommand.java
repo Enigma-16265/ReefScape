@@ -4,7 +4,7 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CoralPivot;
 
-public class CoralPivotCommand extends Command {
+public class CoralPivotDutyCommand extends Command {
     private final CoralPivot m_pivot;
     private final DoubleSupplier m_speedSupplier;
 
@@ -14,7 +14,7 @@ public class CoralPivotCommand extends Command {
      * @param pivot the CoralPivot subsystem.
      * @param speedSupplier a supplier that provides a speed value between -1.0 and 1.0.
      */
-    public CoralPivotCommand(CoralPivot pivot, DoubleSupplier speedSupplier) {
+    public CoralPivotDutyCommand(CoralPivot pivot, DoubleSupplier speedSupplier) {
         m_pivot = pivot;
         m_speedSupplier = speedSupplier;
         addRequirements(m_pivot);
