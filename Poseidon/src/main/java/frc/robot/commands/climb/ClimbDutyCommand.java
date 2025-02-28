@@ -4,7 +4,7 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Climb;
 
-public class ClimbCommand extends Command {
+public class ClimbDutyCommand extends Command {
     private final Climb m_climb;
     private final DoubleSupplier m_speedSupplier;
 
@@ -14,7 +14,7 @@ public class ClimbCommand extends Command {
      * @param climb the Climb subsystem.
      * @param speedSupplier a supplier that provides a speed value (-1.0 to 1.0)
      */
-    public ClimbCommand(Climb climb, DoubleSupplier speedSupplier) {
+    public ClimbDutyCommand(Climb climb, DoubleSupplier speedSupplier) {
         m_climb = climb;
         m_speedSupplier = speedSupplier;
         addRequirements(m_climb);

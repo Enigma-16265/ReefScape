@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.Map;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -10,10 +12,25 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 //import edu.wpi.first.epilogue.Logged;
+import frc.logging.DataNetworkTableLog;
 
 //@Logged
 public class Climb extends SubsystemBase
 {
+    private static final DataNetworkTableLog tlmLog =
+        new DataNetworkTableLog( 
+            "Subsystems.Elevator.tlm",
+            Map.of( "velocity", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
+                    "position", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
+                    "current", DataNetworkTableLog.COLUMN_TYPE.DOUBLE ) );
+
+    private static final DataNetworkTableLog cmdLog =
+    new DataNetworkTableLog( 
+        "Subsystems.Elevator.cmd",
+        Map.of( "velocity", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
+                "position", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
+                "speed", DataNetworkTableLog.COLUMN_TYPE.DOUBLE ) );
+
     // Adjust this CAN ID and gear ratio for your climb mechanism.
     public static final int    kClimbMotorCanId  = 7;
     public static final double kClimbGearRatio   = 1.0 / 100.0; // Example: 1:1 gear ratio
@@ -92,7 +109,12 @@ public class Climb extends SubsystemBase
                 return;
             }
         }
+
+        cmdLog.publish( "speed", speed );
+
         m_climbSparkMax.set( speed );
+
+        logValues();
     }
 
     /**
@@ -132,7 +154,12 @@ public class Climb extends SubsystemBase
     
         // Clamp the target position just before commanding the motor.
         targetPosition = MathUtil.clamp(targetPosition, kMinRotPos, kMaxRotPos);
+
+        cmdLog.publish( "position", position );
+
         m_climbPIDController.setReference(targetPosition, ControlType.kPosition);
+
+        logValues();
     }
 
     /**
@@ -157,15 +184,20 @@ public class Climb extends SubsystemBase
         
         // Clamp the final velocity just before commanding the motor.
         targetVelocity = MathUtil.clamp(targetVelocity, -kNoLoadRpm, kNoLoadRpm);
+
+        cmdLog.publish( "velocity", velocity );
+
         m_climbPIDController.setReference(targetVelocity, ControlType.kVelocity);
+
+        logValues();
     }
 
-    public double getSpeedRPM()
+    public double getVelocity()
     {
         return m_climbEncoder.getVelocity();
     }
 
-    public double getEncoderPosition()
+    public double getPosition()
     {
         return m_climbEncoder.getPosition();
     }
@@ -173,6 +205,13 @@ public class Climb extends SubsystemBase
     public double getCurrent()
     {
         return m_climbSparkMax.getOutputCurrent();
+    }
+
+    public void logValues()
+    {
+        tlmLog.publish( "velocity", m_climbEncoder.getVelocity() );
+        tlmLog.publish( "position", m_climbEncoder.getPosition() );
+        tlmLog.publish( "current",  m_climbSparkMax.getOutputCurrent() );
     }
 
 }
