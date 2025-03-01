@@ -31,8 +31,8 @@ public class CoralIntake extends SubsystemBase
                     "position", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
                     "speed", DataNetworkTableLog.COLUMN_TYPE.DOUBLE ) );
     
-    public static final int    kIntakeMotorCanId = 24;
-    public static final double kCoralGearRatio   = 1.0 / 5.0;
+    public static final int    kIntakeMotorCanId = 6;
+    public static final double kCoralGearRatio   = 1.0 / 12.0;
     public static final double kNoLoadRpm        = 5500 * kCoralGearRatio;
     public static final double kCurrentThreshold = 20.0;
 
