@@ -114,7 +114,6 @@ public class Climb extends SubsystemBase
 
         m_climbSparkMax.set( speed );
 
-        logValues();
     }
 
     /**
@@ -159,7 +158,6 @@ public class Climb extends SubsystemBase
 
         m_climbPIDController.setReference(targetPosition, ControlType.kPosition);
 
-        logValues();
     }
 
     /**
@@ -189,7 +187,6 @@ public class Climb extends SubsystemBase
 
         m_climbPIDController.setReference(targetVelocity, ControlType.kVelocity);
 
-        logValues();
     }
 
     public double getVelocity()

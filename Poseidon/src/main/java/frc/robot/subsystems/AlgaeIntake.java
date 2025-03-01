@@ -49,7 +49,8 @@ public class AlgaeIntake extends SubsystemBase
     private final RelativeEncoder           m_intakeEncoder;
     private final SparkClosedLoopController m_intakePIDController;
 
-    public AlgaeIntake() {
+    public AlgaeIntake()
+    {
         m_intakeSparkMaxConfig = new SparkMaxConfig();
         // Configure the encoder for position conversion if needed.
         m_intakeSparkMaxConfig.encoder.positionConversionFactor(kIntakeGearRatio);
@@ -75,7 +76,8 @@ public class AlgaeIntake extends SubsystemBase
      *
      * @param enabled true to enable, false to disable.
      */
-    public void setCurrentCheckEnabled(boolean enabled) {
+    public void setCurrentCheckEnabled( boolean enabled )
+    {
         currentCheckEnabled = enabled;
     }
 
@@ -99,7 +101,6 @@ public class AlgaeIntake extends SubsystemBase
 
         m_intakeSparkMax.set( speed );
 
-        logValues();
     }
 
     /**
@@ -125,7 +126,6 @@ public class AlgaeIntake extends SubsystemBase
         
         m_intakePIDController.setReference(safePosition, ControlType.kPosition);
 
-        logValues();
     }  
 
     /**
@@ -152,18 +152,20 @@ public class AlgaeIntake extends SubsystemBase
 
         m_intakePIDController.setReference(targetRPM, ControlType.kVelocity);
 
-        logValues();
     }
 
-    public double getVelocity() {
+    public double getVelocity()
+    {
         return m_intakeEncoder.getVelocity();
     }
 
-    public double getPosition() {
+    public double getPosition()
+    {
         return m_intakeEncoder.getPosition();
     }
 
-    public double getCurrent() {
+    public double getCurrent()
+    {
         return m_intakeSparkMax.getOutputCurrent();
     }
 

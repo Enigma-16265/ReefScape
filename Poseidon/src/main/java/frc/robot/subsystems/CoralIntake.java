@@ -97,7 +97,6 @@ public class CoralIntake extends SubsystemBase
 
         m_intakeSparkMax.set(speed);
 
-        logValues();
     }
 
     /**
@@ -123,7 +122,6 @@ public class CoralIntake extends SubsystemBase
         
         m_intakePIDController.setReference(safePosition, ControlType.kPosition);
 
-        logValues();
     }    
 
     /**
@@ -149,18 +147,20 @@ public class CoralIntake extends SubsystemBase
 
         m_intakePIDController.setReference(safeVelocity, ControlType.kVelocity);
 
-        logValues();
     }
 
-    public double getVelocity() {
+    public double getVelocity()
+    {
         return m_intakeEncoder.getVelocity();
     }
 
-    public double getPosition() {
+    public double getPosition()
+    {
         return m_intakeEncoder.getPosition();
     }
 
-    public double getCurrent() {
+    public double getCurrent()
+    {
         return m_intakeSparkMax.getOutputCurrent();
     }
 

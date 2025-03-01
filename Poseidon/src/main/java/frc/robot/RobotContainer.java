@@ -277,4 +277,15 @@ public class RobotContainer
   {
     drivebase.setMotorBrake(brake);
   }
+
+  public void logValues()
+  {
+    algaeIntake.logValues();
+    algaePivot.logValues();
+    climb.logValues();
+    coralIntake.logValues();
+    coralPivot.logValues();
+    elevator.logValues();
+  }
+
 }
