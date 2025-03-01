@@ -28,7 +28,7 @@ public class Robot extends TimedRobot
 
   private Timer disabledTimer;
 
-  private EncoderLogger encoderLogger;
+  //private EncoderLogger encoderLogger;
 
   public Robot()
   {
@@ -55,7 +55,7 @@ public class Robot extends TimedRobot
     // immediately when disabled, but then also let it be pushed more 
     disabledTimer = new Timer();
 
-    encoderLogger = new EncoderLogger();
+    //encoderLogger = new EncoderLogger();
 
     if (isSimulation())
     {
@@ -79,7 +79,7 @@ public class Robot extends TimedRobot
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    encoderLogger.logEncoderData();
+    //encoderLogger.logEncoderData();
   }
 
   /**
