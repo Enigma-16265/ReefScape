@@ -28,6 +28,8 @@ public class Robot extends TimedRobot
 
   private Timer disabledTimer;
 
+  private EncoderLogger encoderLogger;
+
   public Robot()
   {
     instance = this;
@@ -53,6 +55,8 @@ public class Robot extends TimedRobot
     // immediately when disabled, but then also let it be pushed more 
     disabledTimer = new Timer();
 
+    encoderLogger = new EncoderLogger();
+
     if (isSimulation())
     {
       DriverStation.silenceJoystickConnectionWarning(true);
@@ -74,6 +78,8 @@ public class Robot extends TimedRobot
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+    encoderLogger.logEncoderData();
   }
 
   /**
