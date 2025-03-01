@@ -4,7 +4,7 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Elevator;
 
-public class ElevatorCommand extends Command {
+public class ElevatorDutyCommand extends Command {
     private final Elevator m_elevator;
     private final DoubleSupplier m_speedSupplier;
 
@@ -14,7 +14,7 @@ public class ElevatorCommand extends Command {
      * @param elevator the Elevator subsystem.
      * @param speedSupplier a supplier that provides a speed value between -1.0 and 1.0.
      */
-    public ElevatorCommand(Elevator elevator, DoubleSupplier speedSupplier) {
+    public ElevatorDutyCommand(Elevator elevator, DoubleSupplier speedSupplier) {
         m_elevator = elevator;
         m_speedSupplier = speedSupplier;
         addRequirements(m_elevator);

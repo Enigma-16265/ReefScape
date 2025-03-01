@@ -4,8 +4,8 @@
 
 package frc.robot;
 
-import edu.wpi.first.epilogue.Epilogue;
-import edu.wpi.first.epilogue.Logged;
+//import edu.wpi.first.epilogue.Epilogue;
+//import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * described in the TimedRobot documentation. If you change the name of this class or the package after creating this
  * project, you must also update the build.gradle file in the project.
  */
-@Logged
+//@Logged
 public class Robot extends TimedRobot
 {
 
@@ -31,7 +31,7 @@ public class Robot extends TimedRobot
   public Robot()
   {
     instance = this;
-    Epilogue.bind(this);
+    //Epilogue.bind(this);
   }
 
   public static Robot getInstance()

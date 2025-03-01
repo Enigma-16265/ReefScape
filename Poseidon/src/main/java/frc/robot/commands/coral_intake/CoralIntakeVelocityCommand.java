@@ -4,7 +4,7 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CoralIntake;
 
-public class CoralIntakeCommand extends Command {
+public class CoralIntakeVelocityCommand extends Command {
     private final CoralIntake m_intake;
     private final DoubleSupplier m_speedSupplier;
 
@@ -13,7 +13,7 @@ public class CoralIntakeCommand extends Command {
      * @param intake the CoralIntake subsystem.
      * @param speedSupplier a supplier that provides a speed value (0.0 to 1.0)
      */
-    public CoralIntakeCommand(CoralIntake intake, DoubleSupplier speedSupplier) {
+    public CoralIntakeVelocityCommand(CoralIntake intake, DoubleSupplier speedSupplier) {
         m_intake = intake;
         m_speedSupplier = speedSupplier;
         addRequirements(m_intake);

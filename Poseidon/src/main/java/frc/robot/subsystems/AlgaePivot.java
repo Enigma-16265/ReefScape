@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.Map;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -8,11 +10,26 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.epilogue.Logged;
+//import edu.wpi.first.epilogue.Logged;
+import frc.logging.DataNetworkTableLog;
 
-@Logged
+//@Logged
 public class AlgaePivot extends SubsystemBase
 {
+    private static final DataNetworkTableLog tlmLog =
+        new DataNetworkTableLog( 
+            "Subsystems.AlgaePivot.tlm",
+            Map.of( "velocity", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
+                    "position", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
+                    "current", DataNetworkTableLog.COLUMN_TYPE.DOUBLE ) );
+
+    private static final DataNetworkTableLog cmdLog =
+    new DataNetworkTableLog( 
+        "Subsystems.AlgaePivot.cmd",
+        Map.of( "velocity", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
+                "position", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
+                "speed", DataNetworkTableLog.COLUMN_TYPE.DOUBLE ) );
+
     public static final int    kPivotMotorCanId  = 5;
     public static final double kPivotGearRatio   = 1.0 / 27.0;
     public static final double kNoLoadRpm        = 5500 * kPivotGearRatio;
@@ -90,7 +107,12 @@ public class AlgaePivot extends SubsystemBase
                 return;
             }
         }
+
+        cmdLog.publish( "speed", speed );
+
         m_pivotSparkMax.set( speed );
+
+        logValues();
     }
 
     /**
@@ -130,7 +152,12 @@ public class AlgaePivot extends SubsystemBase
     
         // Clamp the target position just before commanding the motor.
         targetPosition = MathUtil.clamp(targetPosition, kMinRotPos, kMaxRotPos);
+
+        cmdLog.publish( "position", position );
+
         m_pivotClosedLoopController.setReference(targetPosition, ControlType.kPosition);
+
+        logValues();
     }
 
     /**
@@ -155,22 +182,31 @@ public class AlgaePivot extends SubsystemBase
         
         // Clamp the final velocity just before commanding the motor.
         targetVelocity = MathUtil.clamp(targetVelocity, -kNoLoadRpm, kNoLoadRpm);
+
+        cmdLog.publish( "velocity", velocity );
+
         m_pivotClosedLoopController.setReference(targetVelocity, ControlType.kVelocity);
+
+        logValues();
     }
 
-    public double getSpeedRPM()
-    {
+    public double getVelocity() {
         return m_pivotEncoder.getVelocity();
     }
 
-    public double getEncoderPosition()
-    {
+    public double getPosition() {
         return m_pivotEncoder.getPosition();
     }
 
-    public double getCurrent()
-    {
+    public double getCurrent() {
         return m_pivotSparkMax.getOutputCurrent();
+    }
+
+    public void logValues()
+    {
+        tlmLog.publish( "velocity", m_pivotEncoder.getVelocity() );
+        tlmLog.publish( "position", m_pivotEncoder.getPosition() );
+        tlmLog.publish( "current",  m_pivotSparkMax.getOutputCurrent() );
     }
     
 }

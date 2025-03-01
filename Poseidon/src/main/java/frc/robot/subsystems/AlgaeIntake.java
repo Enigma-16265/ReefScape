@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.Map;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -8,10 +10,26 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.epilogue.Logged;
+import frc.logging.DataNetworkTableLog;
+//import edu.wpi.first.epilogue.Logged;
 
-@Logged
-public class AlgaeIntake extends SubsystemBase {
+//@Logged
+public class AlgaeIntake extends SubsystemBase
+{
+    private static final DataNetworkTableLog tlmLog =
+        new DataNetworkTableLog( 
+            "Subsystems.AlgaeIntake.tlm",
+            Map.of( "velocity", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
+                    "position", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
+                    "current", DataNetworkTableLog.COLUMN_TYPE.DOUBLE ) );
+
+    private static final DataNetworkTableLog cmdLog =
+    new DataNetworkTableLog( 
+        "Subsystems.AlgaeIntake.cmd",
+        Map.of( "velocity", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
+                "position", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
+                "speed", DataNetworkTableLog.COLUMN_TYPE.DOUBLE ) );
+
     public static final int    kIntakeMotorCanId = 20;
     public static final double kIntakeGearRatio  = 1.0 / 5.0;
     public static final double kNoLoadRpm        = 5500 * kIntakeGearRatio;
@@ -67,7 +85,8 @@ public class AlgaeIntake extends SubsystemBase {
      *
      * @param speed the motor output (-1.0 to 1.0)
      */
-    public void setSpeed(double speed) {
+    public void setSpeed( double speed )
+    {
         if (currentCheckEnabled) {
             double currentDraw = m_intakeSparkMax.getOutputCurrent();
             if (currentDraw > kCurrentThreshold) {
@@ -75,7 +94,12 @@ public class AlgaeIntake extends SubsystemBase {
                 return;
             }
         }
-        m_intakeSparkMax.set(speed);
+
+        cmdLog.publish( "speed", speed );
+
+        m_intakeSparkMax.set( speed );
+
+        logValues();
     }
 
     /**
@@ -96,8 +120,12 @@ public class AlgaeIntake extends SubsystemBase {
                 safePosition = m_intakeEncoder.getPosition();
             }
         }
+
+        cmdLog.publish( "position", position );
         
         m_intakePIDController.setReference(safePosition, ControlType.kPosition);
+
+        logValues();
     }  
 
     /**
@@ -106,10 +134,10 @@ public class AlgaeIntake extends SubsystemBase {
      * the target velocity is set to 0 RPM. The final value is then clamped
      * between -kNoLoadRpm and kNoLoadRpm.
      *
-     * @param rpm the desired intake velocity in RPM
+     * @param velocity the desired intake velocity in RPM
      */
-    public void setVelocity(double rpm) {
-        double targetRPM = rpm;
+    public void setVelocity(double velocity) {
+        double targetRPM = velocity;
         
         if (currentCheckEnabled) {
             double currentDraw = m_intakeSparkMax.getOutputCurrent();
@@ -119,18 +147,31 @@ public class AlgaeIntake extends SubsystemBase {
         }
         
         targetRPM = MathUtil.clamp(targetRPM, -kNoLoadRpm, kNoLoadRpm);
+
+        cmdLog.publish( "velocity", velocity );
+
         m_intakePIDController.setReference(targetRPM, ControlType.kVelocity);
+
+        logValues();
     }
 
-    public double getSpeedRPM() {
+    public double getVelocity() {
         return m_intakeEncoder.getVelocity();
     }
 
-    public double getEncoderPosition() {
+    public double getPosition() {
         return m_intakeEncoder.getPosition();
     }
 
     public double getCurrent() {
         return m_intakeSparkMax.getOutputCurrent();
     }
+
+    public void logValues()
+    {
+        tlmLog.publish( "velocity", m_intakeEncoder.getVelocity() );
+        tlmLog.publish( "position", m_intakeEncoder.getPosition() );
+        tlmLog.publish( "current",  m_intakeSparkMax.getOutputCurrent() );
+    }
+
 }
