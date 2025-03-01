@@ -32,8 +32,8 @@ public class Climb extends SubsystemBase
                 "speed", DataNetworkTableLog.COLUMN_TYPE.DOUBLE ) );
 
     // Adjust this CAN ID and gear ratio for your climb mechanism.
-    public static final int    kClimbMotorCanId  = 7;
-    public static final double kClimbGearRatio   = 1.0 / 100.0; // Example: 1:1 gear ratio
+    public static final int    kClimbMotorCanId  = 23;
+    public static final double kClimbGearRatio   = 1.0 / 125.0; // Example: 1:1 gear ratio
     public static final double kNoLoadRpm        = 5500 * kClimbGearRatio;
     public static final double kMinRotPos        = 0.0;
     public static final double kMaxRotPos        = 20.0;

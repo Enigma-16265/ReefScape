@@ -124,14 +124,18 @@ public class RobotContainer
     // Initialize Commands for Controller 2
     // ------------------
     // AlgaePivot: Left bumper sets position to 25 revs; Right bumper sets position to 0 revs.
-    algaePivotLowPositionCommand = new AlgaePivotPositionCommand(algaePivot, 25.0);
+    algaePivotLowPositionCommand = new AlgaePivotPositionCommand(algaePivot, 5.0);
     algaePivotHighPositionCommand = new AlgaePivotPositionCommand(algaePivot, 0.0);
 
 
     // AlgaeIntake: Use left/right trigger difference as speed input.
-    algaeIntakeCommand = new frc.robot.commands.algae_intake.AlgaeIntakeDutyCommand(
-        algaeIntake,
-        () -> mechanicXbox.getLeftTriggerAxis() - mechanicXbox.getRightTriggerAxis());
+    // algaeIntakeCommand = new frc.robot.commands.algae_intake.AlgaeIntakeDutyCommand(
+    //     algaeIntake,
+    //     () -> mechanicXbox.getLeftTriggerAxis() - mechanicXbox.getRightTriggerAxis());
+    algaeIntakeCommand = new frc.robot.commands.algae_pivot.AlgaePivotDutyCommand(
+      algaePivot,
+      () -> mechanicXbox.getLeftTriggerAxis() - mechanicXbox.getRightTriggerAxis(),
+      0.05);
 
     // Elevator: Use left thumbstick Y axis for elevator speed.
     elevatorCommand = new frc.robot.commands.elevator.ElevatorHoldCommand(
@@ -141,7 +145,8 @@ public class RobotContainer
     // CoralPivot: Use right thumbstick Y axis for pivot speed.
     coralPivotCommand = new frc.robot.commands.coral_pivot.CoralPivotHoldCommand(
         coralPivot,
-        () -> mechanicXbox.getRightY());
+        () -> 0 );
+        //() -> mechanicXbox.getRightY());
 
     // CoralIntake: X button provides constant intake speed (e.g. +0.5), A button constant outtake speed (-0.5).
     coralIntakeCommand = new frc.robot.commands.coral_intake.CoralIntakeHoldCommand(
@@ -153,13 +158,17 @@ public class RobotContainer
     );
 
     // Climb: Y button provides constant climbing speed (+0.5), B button provides constant lowering speed (-0.5).
-    climbCommand = new frc.robot.commands.climb.ClimbHoldCommand(
-        climb,
-        mechanicXbox.y()::getAsBoolean,   // Up button (Y)
-        mechanicXbox.b()::getAsBoolean,   // Down button (B)
-        0.5,                      // Climb up speed
-        -0.5                              // Lower speed
-    );
+    // climbCommand = new frc.robot.commands.climb.ClimbHoldCommand(
+    //     climb,
+    //     mechanicXbox.y()::getAsBoolean,   // Up button (Y)
+    //     mechanicXbox.b()::getAsBoolean,   // Down button (B)
+    //     0.5,                      // Climb up speed
+    //     -0.5                              // Lower speed
+    // );
+    climbCommand = new frc.robot.commands.climb.ClimbDutyCommand(
+      climb,
+      () -> -mechanicXbox.getRightY(),
+      0.75 );
 
     // Configure the trigger bindings
     configureBindings();
@@ -239,22 +248,22 @@ public class RobotContainer
 
     // AlgaePivot preset positions: 
     // Left bumper sets pivot to 25 revolutions, Right bumper sets pivot to 0.
-    mechanicXbox.leftBumper().onTrue(algaePivotLowPositionCommand);
-    mechanicXbox.rightBumper().onTrue(algaePivotHighPositionCommand);
+    //mechanicXbox.leftBumper().onTrue(algaePivotLowPositionCommand);
+    //mechanicXbox.rightBumper().onTrue(algaePivotHighPositionCommand);
 
     // AlgaeIntake: Left and right triggers control intake/outtake speed.
     mechanicXbox.leftTrigger().whileTrue(algaeIntakeCommand);
     mechanicXbox.rightTrigger().whileTrue(algaeIntakeCommand);
 
     // Elevator: Set default command to continuously control elevator speed.
-    elevator.setDefaultCommand(elevatorCommand);
+    //elevator.setDefaultCommand(elevatorCommand);
 
     // CoralPivot: Set default command to continuously control pivot speed.
-    coralPivot.setDefaultCommand(coralPivotCommand);
+    //coralPivot.setDefaultCommand(coralPivotCommand);
 
     // CoralIntake: 
     // X button for intake at constant speed, A button for outtake at constant speed.
-    coralIntake.setDefaultCommand( coralIntakeCommand );
+    //coralIntake.setDefaultCommand( coralIntakeCommand );
 
     // Climb: 
     // Y button for climbing up, B button for lowering.
@@ -276,5 +285,10 @@ public class RobotContainer
   public void setMotorBrake(boolean brake)
   {
     drivebase.setMotorBrake(brake);
+  }
+
+  public void logValues()
+  {
+    algaePivot.logValues();
   }
 }

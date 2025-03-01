@@ -98,8 +98,6 @@ public class AlgaeIntake extends SubsystemBase
         cmdLog.publish( "speed", speed );
 
         m_intakeSparkMax.set( speed );
-
-        logValues();
     }
 
     /**
@@ -124,8 +122,6 @@ public class AlgaeIntake extends SubsystemBase
         cmdLog.publish( "position", position );
         
         m_intakePIDController.setReference(safePosition, ControlType.kPosition);
-
-        logValues();
     }  
 
     /**
@@ -151,8 +147,6 @@ public class AlgaeIntake extends SubsystemBase
         cmdLog.publish( "velocity", velocity );
 
         m_intakePIDController.setReference(targetRPM, ControlType.kVelocity);
-
-        logValues();
     }
 
     public double getVelocity() {

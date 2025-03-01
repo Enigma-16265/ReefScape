@@ -30,7 +30,7 @@ public class CoralPivot extends SubsystemBase
                 "position", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
                 "speed", DataNetworkTableLog.COLUMN_TYPE.DOUBLE ) );
 
-    public static final int kPivotMotorCanId     = 23;
+    public static final int kPivotMotorCanId     = 7;
     public static final double kPivotGearRatio   = 1.0 / 60.0;
     public static final double kNoLoadRpm        = 5500 * kPivotGearRatio;
     public static final double kMinRotPos        = 0.0;
