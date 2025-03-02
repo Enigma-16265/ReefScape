@@ -6,8 +6,8 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 //import edu.wpi.first.epilogue.Logged;
@@ -47,12 +47,12 @@ public class Elevator extends SubsystemBase
     private boolean encoderCheckEnabled = true;
     private boolean currentCheckEnabled = true;
 
-    private final SparkMax m_masterMotor;
-    private final SparkMax m_followerMotor;
+    private final SparkFlex m_masterMotor;
+    private final SparkFlex m_followerMotor;
     
     // Separate config objects for master and follower.
-    public final SparkMaxConfig m_elevatorMasterConfig;
-    public final SparkMaxConfig m_elevatorFollowerConfig;
+    public final SparkFlexConfig m_elevatorMasterConfig;
+    public final SparkFlexConfig m_elevatorFollowerConfig;
 
     private final RelativeEncoder m_elevatorEncoder;
     private final SparkClosedLoopController m_elevatorClosedLoopController;
@@ -60,22 +60,22 @@ public class Elevator extends SubsystemBase
     public Elevator()
     {
         // Create and configure the master config.
-        m_elevatorMasterConfig = new SparkMaxConfig();
+        m_elevatorMasterConfig = new SparkFlexConfig();
         m_elevatorMasterConfig.encoder.positionConversionFactor(kElevatorGearRatio);
         m_elevatorMasterConfig.encoder.velocityConversionFactor(kElevatorGearRatio * 60.0);
         m_elevatorMasterConfig.closedLoop.pid(kP, kI, kD);
         m_elevatorMasterConfig.closedLoop.outputRange(-1.0, 1.0);
 
         // Create and configure the follower config.
-        m_elevatorFollowerConfig = new SparkMaxConfig();
+        m_elevatorFollowerConfig = new SparkFlexConfig();
         // If you need the follower inverted relative to the master, set it here.
         m_elevatorFollowerConfig.inverted(true);
         m_elevatorFollowerConfig.follow( kElevatorFollowerCanId );
 
-        m_masterMotor = new SparkMax(kElevatorMasterCanId, MotorType.kBrushless);
+        m_masterMotor = new SparkFlex(kElevatorMasterCanId, MotorType.kBrushless);
         m_masterMotor.configure(m_elevatorMasterConfig, null, null);
 
-        m_followerMotor = new SparkMax(kElevatorFollowerCanId, MotorType.kBrushless);
+        m_followerMotor = new SparkFlex(kElevatorFollowerCanId, MotorType.kBrushless);
         m_followerMotor.configure(m_elevatorFollowerConfig, null, null);
 
         m_elevatorEncoder = m_masterMotor.getEncoder();
