@@ -179,6 +179,7 @@ public class RobotContainer
     }
 
     configureMechanicsBindings();
+    //configureMechanicsTestBindings();
 
   }
 
@@ -230,47 +231,52 @@ public class RobotContainer
     // Bind the duty cycle command for each subsystem to the Xbox Controller 2 thumbstick Y-axis.
     // Uncomment ONE of the following lines when you want to test that specific subsystem.
 
-    algaeIntake.setDefaultCommand(
-        new frc.robot.commands.algae_intake.AlgaeIntakeDutyCommand(
-            algaeIntake, 
-            () -> mechanicXbox.getRightY()
-        )
-    );
+    // algaeIntake.setDefaultCommand(
+    //     new frc.robot.commands.algae_intake.AlgaeIntakeDutyCommand(
+    //         algaeIntake, 
+    //         () -> mechanicXbox.getRightY()
+    //     )
+    // );
 
-    algaePivot.setDefaultCommand(
-        new frc.robot.commands.algae_pivot.AlgaePivotDutyCommand(
-            algaePivot, 
-            () -> mechanicXbox.getRightY()
-        )
-    );
+    // algaePivot.setDefaultCommand(
+    //     new frc.robot.commands.algae_pivot.AlgaePivotDutyCommand(
+    //         algaePivot, 
+    //         () -> mechanicXbox.getRightY(),
+    //         0.01
+    //     )
+    // );
 
-    climb.setDefaultCommand(
-        new frc.robot.commands.climb.ClimbDutyCommand(
-            climb, 
-            () -> mechanicXbox.getRightY()
-        )
-    );
+    // climb.setDefaultCommand(
+    //     new frc.robot.commands.climb.ClimbDutyCommand(
+    //         climb, 
+    //         () -> mechanicXbox.getRightY(),
+    //         0.01
+    //     )
+    // );
 
-    coralIntake.setDefaultCommand(
-        new frc.robot.commands.coral_intake.CoralIntakeDutyCommand(
-            coralIntake, 
-            () -> mechanicXbox.getRightY()
-        )
-    );
+    // coralIntake.setDefaultCommand(
+    //     new frc.robot.commands.coral_intake.CoralIntakeDutyCommand(
+    //         coralIntake, 
+    //         () -> mechanicXbox.getRightY()
+    //     )
+    // );
 
-    coralPivot.setDefaultCommand(
-        new frc.robot.commands.coral_pivot.CoralPivotDutyCommand(
-            coralPivot, 
-            () -> mechanicXbox.getRightY()
-        )
-    );
+    // coralPivot.setDefaultCommand(
+    //     new frc.robot.commands.coral_pivot.CoralPivotDutyCommand(
+    //         coralPivot, 
+    //         () -> mechanicXbox.getRightY(),
+    //         0.01
+    //     )
+    // );
 
-    elevator.setDefaultCommand(
-        new frc.robot.commands.elevator.ElevatorDutyCommand(
-            elevator, 
-            () -> mechanicXbox.getRightY()
-        )
-    );
+    // elevator.setDefaultCommand(
+    //     new frc.robot.commands.elevator.ElevatorDutyCommand(
+    //         elevator, 
+    //         () -> mechanicXbox.getRightY(),
+    //         0.01
+    //     )
+    // );
+
   }
 
   /**
