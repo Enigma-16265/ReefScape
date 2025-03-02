@@ -112,7 +112,6 @@ public class AlgaePivot extends SubsystemBase
 
         m_pivotSparkMax.set( speed );
 
-        logValues();
     }
 
     /**
@@ -157,7 +156,6 @@ public class AlgaePivot extends SubsystemBase
 
         m_pivotClosedLoopController.setReference(targetPosition, ControlType.kPosition);
 
-        logValues();
     }
 
     /**
@@ -187,18 +185,20 @@ public class AlgaePivot extends SubsystemBase
 
         m_pivotClosedLoopController.setReference(targetVelocity, ControlType.kVelocity);
 
-        logValues();
     }
 
-    public double getVelocity() {
+    public double getVelocity()
+    {
         return m_pivotEncoder.getVelocity();
     }
 
-    public double getPosition() {
+    public double getPosition()
+    {
         return m_pivotEncoder.getPosition();
     }
 
-    public double getCurrent() {
+    public double getCurrent()
+    {
         return m_pivotSparkMax.getOutputCurrent();
     }
 

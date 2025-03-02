@@ -123,7 +123,6 @@ public class Elevator extends SubsystemBase
 
         m_masterMotor.set( speed );
 
-        logValues();
     }
 
     /**
@@ -168,7 +167,6 @@ public class Elevator extends SubsystemBase
 
         m_elevatorClosedLoopController.setReference(targetPosition, ControlType.kPosition);
 
-        logValues();
     }
 
     /**
@@ -198,7 +196,6 @@ public class Elevator extends SubsystemBase
 
         m_elevatorClosedLoopController.setReference(targetVelocity, ControlType.kVelocity);
 
-        logValues();
     }
 
     public double getVelocity()

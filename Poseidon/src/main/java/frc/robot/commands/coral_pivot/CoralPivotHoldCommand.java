@@ -6,9 +6,10 @@ import java.util.function.DoubleSupplier;
 
 public class CoralPivotHoldCommand extends Command
 {
-    private final CoralPivot m_pivot;
+    private final CoralPivot     m_pivot;
     private final DoubleSupplier m_ySupplier;
-    private double m_holdPosition;
+    private       double         m_holdPosition;
+
     private static final double DEADBAND = 0.1; // Adjust as needed
 
     /**
@@ -17,39 +18,47 @@ public class CoralPivotHoldCommand extends Command
      * @param pivot the CoralPivot subsystem.
      * @param ySupplier a supplier that provides the right thumbstick Y value (expected between -1.0 and 1.0).
      */
-    public CoralPivotHoldCommand(CoralPivot pivot, DoubleSupplier ySupplier) {
-        m_pivot = pivot;
+    public CoralPivotHoldCommand( CoralPivot pivot, DoubleSupplier ySupplier )
+    {
+        m_pivot     = pivot;
         m_ySupplier = ySupplier;
-        addRequirements(m_pivot);
+
+        addRequirements( m_pivot );
     }
 
     @Override
-    public void initialize() {
+    public void initialize()
+    {
         // Capture the current position when starting.
         m_holdPosition = m_pivot.getPosition();
     }
 
     @Override
-    public void execute() {
+    public void execute()
+    {
         double speed = m_ySupplier.getAsDouble();
         // If the thumbstick is moved beyond the deadband, drive open-loop and update hold position.
-        if (Math.abs(speed) > DEADBAND) {
-            m_pivot.setSpeed(speed);
+        if ( Math.abs( speed ) > DEADBAND )
+        {
+            m_pivot.setSpeed( speed );
             m_holdPosition = m_pivot.getPosition();
-        } else {
+        }
+        else
+        {
             // If the thumbstick is neutral, hold the last recorded position using closed-loop control.
-            m_pivot.setPosition(m_holdPosition);
+            m_pivot.setPosition( m_holdPosition );
         }
     }
 
     @Override
-    public void end(boolean interrupted) {
-        // Stop the pivot when the command ends.
-        m_pivot.setSpeed(0.0);
+    public void end( boolean interrupted )
+    {
+        m_pivot.setSpeed( 0.0 );
     }
 
     @Override
-    public boolean isFinished() {
-        return false; // Run continuously.
+    public boolean isFinished()
+    {
+        return false;
     }
 }

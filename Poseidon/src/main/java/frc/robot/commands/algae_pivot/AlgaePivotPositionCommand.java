@@ -7,7 +7,8 @@ import frc.robot.subsystems.AlgaePivot;
  * An InstantCommand that sets a target pivot position.
  * When executed, it commands the AlgaePivot subsystem to move to (and hold) the desired position.
  */
-public class AlgaePivotPositionCommand extends InstantCommand {
+public class AlgaePivotPositionCommand extends InstantCommand
+{
 
     /**
      * Creates a new AlgaePivotPositionCommand.
@@ -15,7 +16,8 @@ public class AlgaePivotPositionCommand extends InstantCommand {
      * @param pivot the AlgaePivot subsystem.
      * @param targetPosition the desired pivot position (in revolutions).
      */
-    public AlgaePivotPositionCommand(AlgaePivot pivot, double targetPosition) {
-        super(() -> pivot.setPosition(targetPosition), pivot);
+    public AlgaePivotPositionCommand( AlgaePivot pivot, double targetPosition )
+    {
+        super( () -> pivot.setPosition( targetPosition ), pivot );
     }
 }

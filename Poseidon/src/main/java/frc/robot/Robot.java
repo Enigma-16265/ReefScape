@@ -80,6 +80,7 @@ public class Robot extends TimedRobot
     CommandScheduler.getInstance().run();
 
     //encoderLogger.logEncoderData();
+
     m_robotContainer.logValues();
   }
 
