@@ -18,14 +18,14 @@ public class AlgaePivot extends SubsystemBase
 {
     private static final DataNetworkTableLog tlmLog =
         new DataNetworkTableLog( 
-            "SmartDashboard.Subsystems.AlgaePivot.tlm",
+            "Subsystems.AlgaePivot.tlm",
             Map.of( "velocity", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
                     "position", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
                     "current", DataNetworkTableLog.COLUMN_TYPE.DOUBLE ) );
 
     private static final DataNetworkTableLog cmdLog =
     new DataNetworkTableLog( 
-        "SmartDashboard.Subsystems.AlgaePivot.cmd",
+        "Subsystems.AlgaePivot.cmd",
         Map.of( "velocity", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
                 "position", DataNetworkTableLog.COLUMN_TYPE.DOUBLE,
                 "speed", DataNetworkTableLog.COLUMN_TYPE.DOUBLE ) );
