@@ -226,10 +226,10 @@ public class RobotContainer
 
   public void configureMechanicsTestBindings()
   {
-    
-    // Bind the duty cycle command for the AlgaeIntake subsystem to Xbox Controller 2 thumbstick 2 Y-axis.
-    // Uncomment the following line when you want to activate this binding.
-    
+
+    // Bind the duty cycle command for each subsystem to the Xbox Controller 2 thumbstick Y-axis.
+    // Uncomment ONE of the following lines when you want to test that specific subsystem.
+
     algaeIntake.setDefaultCommand(
         new frc.robot.commands.algae_intake.AlgaeIntakeDutyCommand(
             algaeIntake, 
@@ -237,7 +237,41 @@ public class RobotContainer
         )
     );
 
-}
+    algaePivot.setDefaultCommand(
+        new frc.robot.commands.algae_pivot.AlgaePivotDutyCommand(
+            algaePivot, 
+            () -> mechanicXbox.getRightY()
+        )
+    );
+
+    climb.setDefaultCommand(
+        new frc.robot.commands.climb.ClimbDutyCommand(
+            climb, 
+            () -> mechanicXbox.getRightY()
+        )
+    );
+
+    coralIntake.setDefaultCommand(
+        new frc.robot.commands.coral_intake.CoralIntakeDutyCommand(
+            coralIntake, 
+            () -> mechanicXbox.getRightY()
+        )
+    );
+
+    coralPivot.setDefaultCommand(
+        new frc.robot.commands.coral_pivot.CoralPivotDutyCommand(
+            coralPivot, 
+            () -> mechanicXbox.getRightY()
+        )
+    );
+
+    elevator.setDefaultCommand(
+        new frc.robot.commands.elevator.ElevatorDutyCommand(
+            elevator, 
+            () -> mechanicXbox.getRightY()
+        )
+    );
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
