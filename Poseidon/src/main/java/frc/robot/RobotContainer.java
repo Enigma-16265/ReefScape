@@ -246,7 +246,7 @@ public class RobotContainer
     //     )
     // );
 
-    mechanicXbox.x().onTrue( new AlgaePivotPositionCommand( algaePivot, 5.5 ) );
+    mechanicXbox.x().onTrue( new AlgaePivotPositionCommand( algaePivot, 10.0 ) );
     mechanicXbox.a().onTrue( new AlgaePivotPositionCommand( algaePivot, 0.0 ) );    
 
     // climb.setDefaultCommand(

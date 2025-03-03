@@ -31,15 +31,14 @@ public class AlgaePivot extends SubsystemBase
                 "speed", DataNetworkTableLog.COLUMN_TYPE.DOUBLE ) );
 
     public static final int    kPivotMotorCanId  = 5;
-    //public static final double kPivotGearRatio   = 1.0 / 45.0;
-    public static final double kPivotGearRatio   = 1.0;
+    public static final double kPivotGearRatio   = 1.0 / 45.0;
     public static final double kNoLoadRpm        = 5500 * kPivotGearRatio;
     public static final double kMinRotPos        = 0.0;
     public static final double kMaxRotPos        = 9.0;
     public static final double kCurrentThreshold = 20.0;
 
     // PID tuning parameters for position control (to be tuned)
-    private static final double kP_pos = 0.01;
+    private static final double kP_pos = 0.1;
     private static final double kI_pos = 0.0;
     private static final double kD_pos = 0.0;
 
@@ -61,7 +60,7 @@ public class AlgaePivot extends SubsystemBase
         // Velocity conversion: raw rotations per second * 60 = RPM, then account for gear reduction.
         m_pivotSparkMaxConfig.encoder.velocityConversionFactor(kPivotGearRatio * 60.0);
 
-        // Configure PID parameters and output limits.
+        // Configure PID parameters and output limits.`
         m_pivotSparkMaxConfig.closedLoop.pid(kP_pos, kI_pos, kD_pos);
         m_pivotSparkMaxConfig.closedLoop.outputRange(-1.0, 1.0);
         m_pivotSparkMaxConfig.closedLoop.maxMotion.maxAcceleration(400.0);
