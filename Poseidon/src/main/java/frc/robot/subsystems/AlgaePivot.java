@@ -64,6 +64,8 @@ public class AlgaePivot extends SubsystemBase
         // Configure PID parameters and output limits.
         m_pivotSparkMaxConfig.closedLoop.pid(kP_pos, kI_pos, kD_pos);
         m_pivotSparkMaxConfig.closedLoop.outputRange(-1.0, 1.0);
+        m_pivotSparkMaxConfig.closedLoop.maxMotion.maxAcceleration(400.0);
+        m_pivotSparkMaxConfig.closedLoop.maxMotion.maxVelocity(80.0);
 
         m_pivotSparkMax = new SparkMax(kPivotMotorCanId, MotorType.kBrushless);
         m_pivotSparkMax.configure(m_pivotSparkMaxConfig, null, null);
