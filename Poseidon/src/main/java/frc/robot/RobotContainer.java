@@ -178,8 +178,8 @@ public class RobotContainer
       driverXbox.rightBumper().onTrue(Commands.none());
     }
 
-    configureMechanicsBindings();
-    //configureMechanicsTestBindings();
+    //configureMechanicsBindings();
+    configureMechanicsTestBindings();
 
   }
 
@@ -241,10 +241,13 @@ public class RobotContainer
     // algaePivot.setDefaultCommand(
     //     new frc.robot.commands.algae_pivot.AlgaePivotDutyCommand(
     //         algaePivot, 
-    //         () -> mechanicXbox.getRightY(),
-    //         0.01
+    //         () -> -mechanicXbox.getRightY(),
+    //         0.1
     //     )
     // );
+
+    mechanicXbox.x().onTrue( new AlgaePivotPositionCommand( algaePivot, 5.5 ) );
+    mechanicXbox.a().onTrue( new AlgaePivotPositionCommand( algaePivot, 0.0 ) );    
 
     // climb.setDefaultCommand(
     //     new frc.robot.commands.climb.ClimbDutyCommand(
@@ -297,12 +300,12 @@ public class RobotContainer
 
   public void logValues()
   {
-    algaeIntake.logValues();
+    // algaeIntake.logValues();
     algaePivot.logValues();
-    climb.logValues();
-    coralIntake.logValues();
-    coralPivot.logValues();
-    elevator.logValues();
+    // climb.logValues();
+    // coralIntake.logValues();
+    // coralPivot.logValues();
+    // elevator.logValues();
   }
 
 }
