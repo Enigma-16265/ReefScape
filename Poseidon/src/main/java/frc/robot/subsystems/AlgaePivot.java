@@ -156,7 +156,7 @@ public class AlgaePivot extends SubsystemBase
 
         cmdLog.publish( "position", position );
 
-        m_pivotClosedLoopController.setReference(targetPosition, ControlType.kPosition);
+        m_pivotClosedLoopController.setReference(targetPosition, ControlType.kMAXMotionPositionControl );
 
     }
 
