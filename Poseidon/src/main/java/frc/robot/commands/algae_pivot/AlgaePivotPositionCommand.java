@@ -14,10 +14,11 @@ public class AlgaePivotPositionCommand extends InstantCommand
      * Creates a new AlgaePivotPositionCommand.
      *
      * @param pivot the AlgaePivot subsystem.
-     * @param targetPosition the desired pivot position (in revolutions).
+     * @param targetPosition the desired pivot position (in degrees).
      */
     public AlgaePivotPositionCommand( AlgaePivot pivot, double targetPosition )
     {
         super( () -> pivot.setPosition( targetPosition ), pivot );
     }
+
 }

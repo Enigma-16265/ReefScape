@@ -7,6 +7,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -38,7 +39,7 @@ public class CoralPivot extends SubsystemBase
     public static final double kCurrentThreshold = 20.0;
     
     // PID tuning parameters for position control (to be tuned)
-    private static final double kP_pos = 0.0;
+    private static final double kP_pos = 0.01;
     private static final double kI_pos = 0.0;
     private static final double kD_pos = 0.0;
    
@@ -54,14 +55,19 @@ public class CoralPivot extends SubsystemBase
     
     public CoralPivot() {
         m_pivotSparkMaxConfig = new SparkMaxConfig();
+
+        m_pivotSparkMaxConfig.idleMode( IdleMode.kCoast );
+
         // Configure conversion factors: position conversion factor accounts for gear reduction.
-        m_pivotSparkMaxConfig.encoder.positionConversionFactor(kPivotGearRatio);
+        m_pivotSparkMaxConfig.encoder.positionConversionFactor( kPivotGearRatio * 360.0 );
         // Velocity conversion: raw rotations per second * 60 = RPM, then account for gear reduction.
-        m_pivotSparkMaxConfig.encoder.velocityConversionFactor(kPivotGearRatio * 60.0);
+        m_pivotSparkMaxConfig.encoder.velocityConversionFactor( kPivotGearRatio * 60.0 );
         
         // Configure PID parameters and output limits.
         m_pivotSparkMaxConfig.closedLoop.pid(kP_pos, kI_pos, kD_pos);
         m_pivotSparkMaxConfig.closedLoop.outputRange(-1.0, 1.0);
+        m_pivotSparkMaxConfig.closedLoop.maxMotion.maxAcceleration( 90.0 );
+        m_pivotSparkMaxConfig.closedLoop.maxMotion.maxVelocity( 90.0 );        
         
         m_pivotSparkMax = new SparkMax(kPivotMotorCanId, MotorType.kBrushless);
         m_pivotSparkMax.configure(m_pivotSparkMaxConfig, null, null);
@@ -144,11 +150,11 @@ public class CoralPivot extends SubsystemBase
         }
         
         // Clamp the final target position just before commanding the motor.
-        targetPosition = MathUtil.clamp(targetPosition, kMinRotPos, kMaxRotPos);
+        //targetPosition = MathUtil.clamp(targetPosition, kMinRotPos, kMaxRotPos);
 
         cmdLog.publish( "position", position );
 
-        m_pivotClosedLoopController.setReference(targetPosition, ControlType.kPosition);
+        m_pivotClosedLoopController.setReference( targetPosition, ControlType.kMAXMotionPositionControl );
 
     }
     

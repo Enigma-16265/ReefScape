@@ -62,9 +62,9 @@ public class AlgaePivot extends SubsystemBase
         m_pivotSparkMaxConfig.idleMode( IdleMode.kCoast );
 
         // Configure conversion factors: position conversion factor accounts for gear reduction.
-        m_pivotSparkMaxConfig.encoder.positionConversionFactor(kPivotGearRatio * 360 );
+        m_pivotSparkMaxConfig.encoder.positionConversionFactor( kPivotGearRatio * 360 );
         // Velocity conversion: raw rotations per second * 60 = RPM, then account for gear reduction.
-        m_pivotSparkMaxConfig.encoder.velocityConversionFactor(kPivotGearRatio * 60.0 );
+        m_pivotSparkMaxConfig.encoder.velocityConversionFactor( kPivotGearRatio * 60.0 );
 
         // Configure PID parameters and output limits.`
         m_pivotSparkMaxConfig.closedLoop.pid(kP_pos, kI_pos, kD_pos);

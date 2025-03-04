@@ -8,6 +8,8 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 //import edu.wpi.first.epilogue.Logged;
@@ -39,13 +41,13 @@ public class Elevator extends SubsystemBase
     public static final double kCurrentThreshold      = 20.0;
 
     // PID tuning parameters for position control (to be tuned)
-    private static final double kP = 0.0;
+    private static final double kP = 0.01;
     private static final double kI = 0.0;
     private static final double kD = 0.0;
 
     // Flags to enable/disable safety checks
-    private boolean encoderCheckEnabled = true;
-    private boolean currentCheckEnabled = true;
+    private boolean encoderCheckEnabled = false;
+    private boolean currentCheckEnabled = false;
 
     private final SparkFlex m_masterMotor;
     private final SparkFlex m_followerMotor;
@@ -61,14 +63,18 @@ public class Elevator extends SubsystemBase
     {
         // Create and configure the master config.
         m_elevatorMasterConfig = new SparkFlexConfig();
+        m_elevatorMasterConfig.idleMode( IdleMode.kCoast );
         m_elevatorMasterConfig.encoder.positionConversionFactor(kElevatorGearRatio);
         m_elevatorMasterConfig.encoder.velocityConversionFactor(kElevatorGearRatio * 60.0);
         m_elevatorMasterConfig.closedLoop.pid(kP, kI, kD);
         m_elevatorMasterConfig.closedLoop.outputRange(-1.0, 1.0);
+        m_elevatorMasterConfig.closedLoop.maxMotion.maxAcceleration( 1.0 );
+        m_elevatorMasterConfig.closedLoop.maxMotion.maxVelocity( 1.0 );
 
         // Create and configure the follower config.
         m_elevatorFollowerConfig = new SparkFlexConfig();
         // If you need the follower inverted relative to the master, set it here.
+        m_elevatorFollowerConfig.idleMode( IdleMode.kCoast );
         m_elevatorFollowerConfig.inverted(true);
         m_elevatorFollowerConfig.follow( kElevatorFollowerCanId );
 
@@ -161,11 +167,11 @@ public class Elevator extends SubsystemBase
         }
     
         // Clamp the target position just before commanding the motor.
-        targetPosition = MathUtil.clamp(targetPosition, kMinRotPos, kMaxRotPos);
+        //targetPosition = MathUtil.clamp(targetPosition, kMinRotPos, kMaxRotPos);
 
         cmdLog.publish( "position", position );
 
-        m_elevatorClosedLoopController.setReference(targetPosition, ControlType.kPosition);
+        m_elevatorClosedLoopController.setReference( targetPosition, ControlType.kMAXMotionPositionControl );
 
     }
 

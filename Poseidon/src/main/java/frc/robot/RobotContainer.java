@@ -184,11 +184,14 @@ public class RobotContainer
   }
 
   // Controller 2 mapping
+
+  // Move Algae to Driver controller
   // AlgaePivot  - L/R bumper  : R set's position in Revs to 0, L set's position in Revs to 25
-  // AlgaeIntake - L/R trigger : L provides speed to intake, R provides speed to outtake
+  // AlgaeIntake - L/R trigger : R provides speed to intake, L provides speed to outtake
+
   // Elevator    - Left Thumb  : Up provides speed to lift, Down provides speed to drop
-  // CoralPivot  - Right Thumb : Up provides speed to rotate forward, Down provides speed to rotate backwards
-  // CoralIntake - X/A buttons : X provides constant speed to intake, A provides constant speed to outtake
+  // CoralPivot  - X/A : X moved to up Position , A 
+  // CoralIntake - L/R Trigger : L provides speed to intake, R provides speed to outtake
   // Climb       - Y/B buttons : Y provides constant speed to climb, B provides constant speed to let down
   void configureMechanicsBindings() {
       // AlgaePivot preset positions: 
@@ -246,14 +249,14 @@ public class RobotContainer
     //     )
     // );
 
-    mechanicXbox.x().onTrue( new AlgaePivotPositionCommand( algaePivot, 10.0 ) );
-    mechanicXbox.a().onTrue( new AlgaePivotPositionCommand( algaePivot, 0.0 ) );    
+    // mechanicXbox.x().onTrue( new AlgaePivotPositionCommand( algaePivot, 10.0 ) );
+    // mechanicXbox.a().onTrue( new AlgaePivotPositionCommand( algaePivot, 0.0 ) );    
 
     // climb.setDefaultCommand(
     //     new frc.robot.commands.climb.ClimbDutyCommand(
     //         climb, 
     //         () -> mechanicXbox.getRightY(),
-    //         0.01
+    //         0.5
     //     )
     // );
 
@@ -264,13 +267,13 @@ public class RobotContainer
     //     )
     // );
 
-    // coralPivot.setDefaultCommand(
-    //     new frc.robot.commands.coral_pivot.CoralPivotDutyCommand(
-    //         coralPivot, 
-    //         () -> mechanicXbox.getRightY(),
-    //         0.01
-    //     )
-    // );
+    coralPivot.setDefaultCommand(
+        new frc.robot.commands.coral_pivot.CoralPivotDutyCommand(
+            coralPivot, 
+            () -> mechanicXbox.getRightY(),
+            0.01
+        )
+    );
 
     // elevator.setDefaultCommand(
     //     new frc.robot.commands.elevator.ElevatorDutyCommand(
@@ -301,10 +304,10 @@ public class RobotContainer
   public void logValues()
   {
     // algaeIntake.logValues();
-    algaePivot.logValues();
+    // algaePivot.logValues();
     // climb.logValues();
     // coralIntake.logValues();
-    // coralPivot.logValues();
+    coralPivot.logValues();
     // elevator.logValues();
   }
 
