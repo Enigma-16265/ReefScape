@@ -37,11 +37,11 @@ public class Elevator extends SubsystemBase
     public static final double kElevatorGearRatio     = 1.0 / 12.0;
     public static final double kNoLoadRpm             = 5500 * kElevatorGearRatio;
     public static final double kMinRotPos             = 0.0;
-    public static final double kMaxRotPos             = 20.0;
+    public static final double kMaxRotPos             = 20.0; // max 158 cm
     public static final double kCurrentThreshold      = 20.0;
 
     // PID tuning parameters for position control (to be tuned)
-    private static final double kP = 0.01;
+    private static final double kP = 0.1;
     private static final double kI = 0.0;
     private static final double kD = 0.0;
 
@@ -68,15 +68,14 @@ public class Elevator extends SubsystemBase
         m_elevatorMasterConfig.encoder.velocityConversionFactor( ( kElevatorGearRatio * 33.02 ) / 60.0 );
         m_elevatorMasterConfig.closedLoop.pid(kP, kI, kD);
         m_elevatorMasterConfig.closedLoop.outputRange(-1.0, 1.0);
-        m_elevatorMasterConfig.closedLoop.maxMotion.maxAcceleration( 21.8 );
-        m_elevatorMasterConfig.closedLoop.maxMotion.maxVelocity( 21.8 );
+        m_elevatorMasterConfig.closedLoop.maxMotion.maxAcceleration( 704 );
+        m_elevatorMasterConfig.closedLoop.maxMotion.maxVelocity( 704 );
 
         // Create and configure the follower config.
         m_elevatorFollowerConfig = new SparkFlexConfig();
         // If you need the follower inverted relative to the master, set it here.
         m_elevatorFollowerConfig.idleMode( IdleMode.kCoast );
-        m_elevatorFollowerConfig.inverted(true);
-        m_elevatorFollowerConfig.follow( kElevatorFollowerCanId );
+        m_elevatorFollowerConfig.follow( kElevatorMasterCanId, true );
 
         m_masterMotor = new SparkFlex(kElevatorMasterCanId, MotorType.kBrushless);
         m_masterMotor.configure(m_elevatorMasterConfig, null, null);

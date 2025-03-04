@@ -24,6 +24,7 @@ import frc.robot.commands.climb.ClimbHoldCommand;
 import frc.robot.commands.coral_intake.CoralIntakeHoldCommand;
 import frc.robot.commands.coral_pivot.CoralPivotHoldCommand;
 import frc.robot.commands.elevator.ElevatorHoldCommand;
+import frc.robot.commands.elevator.ElevatorPositionCommand;
 import frc.robot.subsystems.AlgaeIntake;
 import frc.robot.subsystems.AlgaePivot;
 import frc.robot.subsystems.Climb;
@@ -275,13 +276,16 @@ public class RobotContainer
     //     )
     // );
 
-    elevator.setDefaultCommand(
-        new frc.robot.commands.elevator.ElevatorDutyCommand(
-            elevator, 
-            () -> -mechanicXbox.getRightY(),
-            0.1
-        )
-    );
+    // elevator.setDefaultCommand(
+    //     new frc.robot.commands.elevator.ElevatorDutyCommand(
+    //         elevator, 
+    //         () -> -mechanicXbox.getRightY(),
+    //         0.1
+    //     )
+    // );
+
+    mechanicXbox.x().onTrue( new ElevatorPositionCommand( elevator, 12.7 ) );
+    mechanicXbox.a().onTrue( new ElevatorPositionCommand( elevator, 0.0 ) );  
 
   }
 
