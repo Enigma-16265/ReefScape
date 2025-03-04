@@ -36,7 +36,7 @@ public class AlgaePivot extends SubsystemBase
     public static final double kPivotGearRatio   = 1.0 / 45.0;
     public static final double kNoLoadRpm        = 5500 * kPivotGearRatio;
     public static final double kMinRotPos        = 0.0;
-    public static final double kMaxRotPos        = 9.0;
+    public static final double kMaxRotPos        = 9.0; // 73.0 max
     public static final double kCurrentThreshold = 20.0;
 
     // PID tuning parameters for position control (to be tuned)
@@ -62,7 +62,7 @@ public class AlgaePivot extends SubsystemBase
         m_pivotSparkMaxConfig.idleMode( IdleMode.kCoast );
 
         // Configure conversion factors: position conversion factor accounts for gear reduction.
-        m_pivotSparkMaxConfig.encoder.positionConversionFactor( kPivotGearRatio * 360 );
+        m_pivotSparkMaxConfig.encoder.positionConversionFactor( kPivotGearRatio * 360.0 );
         // Velocity conversion: raw rotations per second * 60 = RPM, then account for gear reduction.
         m_pivotSparkMaxConfig.encoder.velocityConversionFactor( kPivotGearRatio * 60.0 );
 

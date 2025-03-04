@@ -34,7 +34,7 @@ public class Elevator extends SubsystemBase
 
     public static final int    kElevatorMasterCanId   = 21;
     public static final int    kElevatorFollowerCanId = 22;
-    public static final double kElevatorGearRatio     = 1.0 / 5.0;
+    public static final double kElevatorGearRatio     = 1.0 / 12.0;
     public static final double kNoLoadRpm             = 5500 * kElevatorGearRatio;
     public static final double kMinRotPos             = 0.0;
     public static final double kMaxRotPos             = 20.0;
@@ -64,12 +64,12 @@ public class Elevator extends SubsystemBase
         // Create and configure the master config.
         m_elevatorMasterConfig = new SparkFlexConfig();
         m_elevatorMasterConfig.idleMode( IdleMode.kCoast );
-        m_elevatorMasterConfig.encoder.positionConversionFactor(kElevatorGearRatio);
-        m_elevatorMasterConfig.encoder.velocityConversionFactor(kElevatorGearRatio * 60.0);
+        m_elevatorMasterConfig.encoder.positionConversionFactor( kElevatorGearRatio * 33.02 ); // 13 in. per sproke rotation
+        m_elevatorMasterConfig.encoder.velocityConversionFactor( ( kElevatorGearRatio * 33.02 ) / 60.0 );
         m_elevatorMasterConfig.closedLoop.pid(kP, kI, kD);
         m_elevatorMasterConfig.closedLoop.outputRange(-1.0, 1.0);
-        m_elevatorMasterConfig.closedLoop.maxMotion.maxAcceleration( 1.0 );
-        m_elevatorMasterConfig.closedLoop.maxMotion.maxVelocity( 1.0 );
+        m_elevatorMasterConfig.closedLoop.maxMotion.maxAcceleration( 21.8 );
+        m_elevatorMasterConfig.closedLoop.maxMotion.maxVelocity( 21.8 );
 
         // Create and configure the follower config.
         m_elevatorFollowerConfig = new SparkFlexConfig();

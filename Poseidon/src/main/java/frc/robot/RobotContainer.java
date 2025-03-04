@@ -249,7 +249,7 @@ public class RobotContainer
     //     )
     // );
 
-    // mechanicXbox.x().onTrue( new AlgaePivotPositionCommand( algaePivot, 10.0 ) );
+    // mechanicXbox.x().onTrue( new AlgaePivotPositionCommand( algaePivot, 45.0 ) );
     // mechanicXbox.a().onTrue( new AlgaePivotPositionCommand( algaePivot, 0.0 ) );    
 
     // climb.setDefaultCommand(
@@ -267,21 +267,21 @@ public class RobotContainer
     //     )
     // );
 
-    coralPivot.setDefaultCommand(
-        new frc.robot.commands.coral_pivot.CoralPivotDutyCommand(
-            coralPivot, 
-            () -> mechanicXbox.getRightY(),
-            0.01
-        )
-    );
-
-    // elevator.setDefaultCommand(
-    //     new frc.robot.commands.elevator.ElevatorDutyCommand(
-    //         elevator, 
-    //         () -> mechanicXbox.getRightY(),
-    //         0.01
+    // coralPivot.setDefaultCommand(
+    //     new frc.robot.commands.coral_pivot.CoralPivotDutyCommand(
+    //         coralPivot, 
+    //         () -> -mechanicXbox.getRightY(),
+    //         0.5
     //     )
     // );
+
+    elevator.setDefaultCommand(
+        new frc.robot.commands.elevator.ElevatorDutyCommand(
+            elevator, 
+            () -> -mechanicXbox.getRightY(),
+            0.1
+        )
+    );
 
   }
 
@@ -307,8 +307,8 @@ public class RobotContainer
     // algaePivot.logValues();
     // climb.logValues();
     // coralIntake.logValues();
-    coralPivot.logValues();
-    // elevator.logValues();
+    // coralPivot.logValues();
+    elevator.logValues();
   }
 
 }
