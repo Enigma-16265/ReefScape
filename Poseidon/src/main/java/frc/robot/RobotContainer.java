@@ -284,7 +284,7 @@ public class RobotContainer
     //     )
     // );
 
-    mechanicXbox.x().onTrue( new ElevatorPositionCommand( elevator, 12.7 ) );
+    mechanicXbox.x().onTrue( new ElevatorPositionCommand( elevator, 25.4 ) );
     mechanicXbox.a().onTrue( new ElevatorPositionCommand( elevator, 0.0 ) );  
 
   }

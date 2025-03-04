@@ -41,9 +41,9 @@ public class Elevator extends SubsystemBase
     public static final double kCurrentThreshold      = 20.0;
 
     // PID tuning parameters for position control (to be tuned)
-    private static final double kP = 0.1;
+    private static final double kP = 0.025;
     private static final double kI = 0.0;
-    private static final double kD = 0.0;
+    private static final double kD = 0.05;
 
     // Flags to enable/disable safety checks
     private boolean encoderCheckEnabled = false;
@@ -63,18 +63,18 @@ public class Elevator extends SubsystemBase
     {
         // Create and configure the master config.
         m_elevatorMasterConfig = new SparkFlexConfig();
-        m_elevatorMasterConfig.idleMode( IdleMode.kCoast );
+        m_elevatorMasterConfig.idleMode( IdleMode.kBrake );
         m_elevatorMasterConfig.encoder.positionConversionFactor( kElevatorGearRatio * 33.02 ); // 13 in. per sproke rotation
         m_elevatorMasterConfig.encoder.velocityConversionFactor( ( kElevatorGearRatio * 33.02 ) / 60.0 );
         m_elevatorMasterConfig.closedLoop.pid(kP, kI, kD);
         m_elevatorMasterConfig.closedLoop.outputRange(-1.0, 1.0);
-        m_elevatorMasterConfig.closedLoop.maxMotion.maxAcceleration( 704 );
-        m_elevatorMasterConfig.closedLoop.maxMotion.maxVelocity( 704 );
+        m_elevatorMasterConfig.closedLoop.maxMotion.maxAcceleration( 11264 );
+        m_elevatorMasterConfig.closedLoop.maxMotion.maxVelocity( 11264 );
 
         // Create and configure the follower config.
         m_elevatorFollowerConfig = new SparkFlexConfig();
         // If you need the follower inverted relative to the master, set it here.
-        m_elevatorFollowerConfig.idleMode( IdleMode.kCoast );
+        m_elevatorFollowerConfig.idleMode( IdleMode.kBrake );
         m_elevatorFollowerConfig.follow( kElevatorMasterCanId, true );
 
         m_masterMotor = new SparkFlex(kElevatorMasterCanId, MotorType.kBrushless);
