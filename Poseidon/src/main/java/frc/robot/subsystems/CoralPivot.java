@@ -39,7 +39,7 @@ public class CoralPivot extends SubsystemBase
     public static final double kCurrentThreshold = 20.0;
     
     // PID tuning parameters for position control (to be tuned)
-    private static final double kP_pos = 0.1;
+    private static final double kP_pos = 0.01;
     private static final double kI_pos = 0.0;
     private static final double kD_pos = 0.75;
    
