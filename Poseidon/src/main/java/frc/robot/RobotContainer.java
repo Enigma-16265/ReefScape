@@ -277,8 +277,10 @@ public class RobotContainer
     //     )
     // );
 
-    // mechanicXbox.x().onTrue( new CoralPivotPositionCommand( coralPivot, 30.0 ) );
-    // mechanicXbox.a().onTrue( new CoralPivotPositionCommand( coralPivot, 0.0 ) );
+    mechanicXbox.x().onTrue( new CoralPivotPositionCommand( coralPivot, 95.0 ) );
+    mechanicXbox.a().onTrue( new CoralPivotPositionCommand( coralPivot, 0.0 ) );
+
+    // 95 deg, first position ; 265 deg, fully up
 
     // elevator.setDefaultCommand(
     //     new frc.robot.commands.elevator.ElevatorDutyCommand(

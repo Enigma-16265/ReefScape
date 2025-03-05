@@ -39,9 +39,9 @@ public class CoralPivot extends SubsystemBase
     public static final double kCurrentThreshold = 20.0;
     
     // PID tuning parameters for position control (to be tuned)
-    private static final double kP_pos = 0.01;
+    private static final double kP_pos = 0.1;
     private static final double kI_pos = 0.0;
-    private static final double kD_pos = 0.0;
+    private static final double kD_pos = 0.75;
    
     // Flags to enable/disable safety checks
     private boolean encoderCheckEnabled = false;
@@ -56,7 +56,7 @@ public class CoralPivot extends SubsystemBase
     public CoralPivot() {
         m_pivotSparkMaxConfig = new SparkMaxConfig();
 
-        m_pivotSparkMaxConfig.idleMode( IdleMode.kCoast );
+        m_pivotSparkMaxConfig.idleMode( IdleMode.kBrake );
 
         // Configure conversion factors: position conversion factor accounts for gear reduction.
         m_pivotSparkMaxConfig.encoder.positionConversionFactor( kPivotGearRatio * 360.0 );
@@ -66,8 +66,8 @@ public class CoralPivot extends SubsystemBase
         // Configure PID parameters and output limits.
         m_pivotSparkMaxConfig.closedLoop.pid(kP_pos, kI_pos, kD_pos);
         m_pivotSparkMaxConfig.closedLoop.outputRange(-1.0, 1.0);
-        m_pivotSparkMaxConfig.closedLoop.maxMotion.maxAcceleration( 360.0 );
-        m_pivotSparkMaxConfig.closedLoop.maxMotion.maxVelocity( 360.0 );        
+        m_pivotSparkMaxConfig.closedLoop.maxMotion.maxAcceleration( 50000.0 );
+        m_pivotSparkMaxConfig.closedLoop.maxMotion.maxVelocity( 50000.0 );        
         
         m_pivotSparkMax = new SparkMax(kPivotMotorCanId, MotorType.kBrushless);
         m_pivotSparkMax.configure(m_pivotSparkMaxConfig, null, null);
