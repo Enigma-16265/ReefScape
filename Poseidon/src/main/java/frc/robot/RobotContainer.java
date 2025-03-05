@@ -21,6 +21,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.algae_intake.AlgaeIntakeDutyCommand;
 import frc.robot.commands.algae_pivot.AlgaePivotPositionCommand;
 import frc.robot.commands.climb.ClimbHoldCommand;
+import frc.robot.commands.coral_intake.CoralIntakeDutyCommand;
 import frc.robot.commands.coral_intake.CoralIntakeHoldCommand;
 import frc.robot.commands.coral_pivot.CoralPivotHoldCommand;
 import frc.robot.commands.coral_pivot.CoralPivotPositionCommand;
@@ -132,6 +133,7 @@ public class RobotContainer
   private void configureBindings()
   {
 
+    
     Command driveFieldOrientedDirectAngle      = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
     Command driveRobotOrientedAngularVelocity  = drivebase.driveFieldOriented(driveRobotOriented);
@@ -177,11 +179,12 @@ public class RobotContainer
       driverXbox.start().whileTrue(Commands.none());
       driverXbox.back().whileTrue(Commands.none());
       // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverXbox.rightBumper().onTrue(Commands.none());
+      // driverXbox.rightBumper().onTrue(Commands.none());
     }
+    
 
-    //configureMechanicsBindings();
-    configureMechanicsTestBindings();
+    configureMechanicsBindings();
+    //configureMechanicsTestBindings();
 
   }
 
@@ -198,36 +201,39 @@ public class RobotContainer
   void configureMechanicsBindings() {
       // AlgaePivot preset positions: 
       // Left bumper sets pivot to 25 revolutions, Right bumper sets pivot to 0.
-      mechanicXbox.leftBumper().onTrue(new AlgaePivotPositionCommand(algaePivot, 25.0));
-      mechanicXbox.rightBumper().onTrue(new AlgaePivotPositionCommand(algaePivot, 0.0));
+      driverXbox.leftBumper().onTrue(new AlgaePivotPositionCommand(algaePivot, 0.0));
+      driverXbox.rightBumper().onTrue(new AlgaePivotPositionCommand(algaePivot, 47.0));
 
       // AlgaeIntake: Left and right triggers control intake/outtake speed.
-      mechanicXbox.leftTrigger().whileTrue(new AlgaeIntakeDutyCommand(
-          algaeIntake, () -> mechanicXbox.getLeftTriggerAxis() - mechanicXbox.getRightTriggerAxis()));
-      mechanicXbox.rightTrigger().whileTrue(new AlgaeIntakeDutyCommand(
-          algaeIntake, () -> mechanicXbox.getLeftTriggerAxis() - mechanicXbox.getRightTriggerAxis()));
+      driverXbox.leftTrigger().whileTrue(new AlgaeIntakeDutyCommand(
+          algaeIntake, () -> driverXbox.getLeftTriggerAxis() - driverXbox.getRightTriggerAxis()));
+      driverXbox.rightTrigger().whileTrue(new AlgaeIntakeDutyCommand(
+          algaeIntake, () -> driverXbox.getLeftTriggerAxis() - driverXbox.getRightTriggerAxis()));
 
       // Elevator: Set default command to continuously control elevator speed.
-      elevator.setDefaultCommand(new ElevatorHoldCommand(elevator, () -> mechanicXbox.getLeftY()));
+      mechanicXbox.povLeft().onTrue( new ElevatorPositionCommand( elevator, 60.96 ) );
+      mechanicXbox.povRight().onTrue( new ElevatorPositionCommand( elevator, 60.96 ) );
+      mechanicXbox.povUp().onTrue( new ElevatorPositionCommand( elevator, 147.32 ) );
+      mechanicXbox.povDown().onTrue( new ElevatorPositionCommand( elevator, 0.0 ) );
 
-      // CoralPivot: Set default command to continuously control pivot speed.
-      coralPivot.setDefaultCommand(new CoralPivotHoldCommand(coralPivot, () -> mechanicXbox.getRightY()));
+      // CoralPivot: Complete instantaneous commands to control pivot position in Degrees.
+      mechanicXbox.x().onTrue( new CoralPivotPositionCommand( coralPivot, 95.0 ) );
+      mechanicXbox.b().onTrue( new CoralPivotPositionCommand( coralPivot, 265.0 ) );
 
       // CoralIntake: X button for intake at constant speed, A button for outtake at constant speed.
-      coralIntake.setDefaultCommand(new CoralIntakeHoldCommand(
-          coralIntake,
-          mechanicXbox.x()::getAsBoolean,
-          mechanicXbox.a()::getAsBoolean,
-          0.5,
-          -0.5));
+      mechanicXbox.leftTrigger().whileTrue(new CoralIntakeDutyCommand(
+          coralIntake, () -> mechanicXbox.getLeftTriggerAxis() - mechanicXbox.getRightTriggerAxis()));
+      mechanicXbox.rightTrigger().whileTrue(new CoralIntakeDutyCommand(
+          coralIntake, () -> mechanicXbox.getLeftTriggerAxis() - mechanicXbox.getRightTriggerAxis()));
 
       // Climb: Y button for climbing up, B button for lowering.
-      climb.setDefaultCommand(new ClimbHoldCommand(
-          climb,
-          mechanicXbox.y()::getAsBoolean,
-          mechanicXbox.b()::getAsBoolean,
-          0.5,
-          -0.5));
+      climb.setDefaultCommand(
+        new frc.robot.commands.climb.ClimbDutyCommand(
+            climb, 
+            () -> mechanicXbox.getRightY(),
+            0.5
+        )
+    );
   }
 
   public void configureMechanicsTestBindings()
@@ -277,10 +283,10 @@ public class RobotContainer
     //     )
     // );
 
-    mechanicXbox.x().onTrue( new CoralPivotPositionCommand( coralPivot, 95.0 ) );
-    mechanicXbox.a().onTrue( new CoralPivotPositionCommand( coralPivot, 0.0 ) );
-
+    // Intake Position Sets
     // 95 deg, first position ; 265 deg, fully up
+    // mechanicXbox.x().onTrue( new CoralPivotPositionCommand( coralPivot, 95.0 ) );
+    // mechanicXbox.b().onTrue( new CoralPivotPositionCommand( coralPivot, 265.0 ) );
 
     // elevator.setDefaultCommand(
     //     new frc.robot.commands.elevator.ElevatorDutyCommand(
@@ -317,7 +323,7 @@ public class RobotContainer
     // algaePivot.logValues();
     // climb.logValues();
     // coralIntake.logValues();
-    coralPivot.logValues();
+    // coralPivot.logValues();
     // elevator.logValues();
   }
 

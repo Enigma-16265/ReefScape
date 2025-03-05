@@ -8,6 +8,8 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.logging.DataNetworkTableLog;
@@ -52,6 +54,8 @@ public class AlgaeIntake extends SubsystemBase
     public AlgaeIntake()
     {
         m_intakeSparkMaxConfig = new SparkMaxConfig();
+
+        m_intakeSparkMaxConfig.idleMode( IdleMode.kBrake );
         // Configure the encoder for position conversion if needed.
         m_intakeSparkMaxConfig.encoder.positionConversionFactor(kIntakeGearRatio);
         // Configure the encoder to report velocity in RPM.
