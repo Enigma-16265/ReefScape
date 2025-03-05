@@ -23,6 +23,7 @@ import frc.robot.commands.algae_pivot.AlgaePivotPositionCommand;
 import frc.robot.commands.climb.ClimbHoldCommand;
 import frc.robot.commands.coral_intake.CoralIntakeHoldCommand;
 import frc.robot.commands.coral_pivot.CoralPivotHoldCommand;
+import frc.robot.commands.coral_pivot.CoralPivotPositionCommand;
 import frc.robot.commands.elevator.ElevatorHoldCommand;
 import frc.robot.commands.elevator.ElevatorPositionCommand;
 import frc.robot.subsystems.AlgaeIntake;
@@ -276,6 +277,9 @@ public class RobotContainer
     //     )
     // );
 
+    // mechanicXbox.x().onTrue( new CoralPivotPositionCommand( coralPivot, 30.0 ) );
+    // mechanicXbox.a().onTrue( new CoralPivotPositionCommand( coralPivot, 0.0 ) );
+
     // elevator.setDefaultCommand(
     //     new frc.robot.commands.elevator.ElevatorDutyCommand(
     //         elevator, 
@@ -284,8 +288,8 @@ public class RobotContainer
     //     )
     // );
 
-    mechanicXbox.x().onTrue( new ElevatorPositionCommand( elevator, 25.4 ) );
-    mechanicXbox.a().onTrue( new ElevatorPositionCommand( elevator, 0.0 ) );  
+    // mechanicXbox.x().onTrue( new ElevatorPositionCommand( elevator, 25.4 ) );
+    // mechanicXbox.a().onTrue( new ElevatorPositionCommand( elevator, 0.0 ) );  
 
   }
 
@@ -311,8 +315,8 @@ public class RobotContainer
     // algaePivot.logValues();
     // climb.logValues();
     // coralIntake.logValues();
-    // coralPivot.logValues();
-    elevator.logValues();
+    coralPivot.logValues();
+    // elevator.logValues();
   }
 
 }

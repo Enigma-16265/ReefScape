@@ -41,7 +41,7 @@ public class Elevator extends SubsystemBase
     public static final double kCurrentThreshold      = 20.0;
 
     // PID tuning parameters for position control (to be tuned)
-    private static final double kP = 0.025;
+    private static final double kP = 0.03;
     private static final double kI = 0.0;
     private static final double kD = 0.05;
 
