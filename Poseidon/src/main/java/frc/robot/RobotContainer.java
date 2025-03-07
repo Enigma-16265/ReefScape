@@ -309,7 +309,7 @@ public class RobotContainer
   public Command getAutonomousCommand()
   {
     // An example command will be run in autonomous
-    return drivebase.getAutonomousCommand("New Auto");
+    return drivebase.getAutonomousCommand("Test Auto");
   }
 
   public void setMotorBrake(boolean brake)
@@ -323,7 +323,7 @@ public class RobotContainer
     // algaePivot.logValues();
     // climb.logValues();
     // coralIntake.logValues();
-    coralPivot.logValues();
+    // coralPivot.logValues();
     // elevator.logValues();
   }
 
