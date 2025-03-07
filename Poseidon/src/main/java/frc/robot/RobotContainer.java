@@ -144,22 +144,24 @@ public class RobotContainer
     Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(
         driveDirectAngleKeyboard);
 
-    if (RobotBase.isSimulation())
-    {
-      drivebase.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
-    } else
-    {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
-    }
+    // if (RobotBase.isSimulation())
+   // {
+      // drivebase.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
+   // } else
+   // {
+      drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
+    //}
 
-    if (Robot.isSimulation())
-    {
-      driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-      driverXbox.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
+    // if (Robot.isSimulation())
+    // {
+    //   driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+    //   driverXbox.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
 
-    }
+    // }
+    /* 
     if (DriverStation.isTest())
     {
+      
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
 
       driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
@@ -170,6 +172,7 @@ public class RobotContainer
       driverXbox.rightBumper().onTrue(Commands.none());
     } else
     {
+    */
       driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
       driverXbox.b().whileTrue(
@@ -180,7 +183,7 @@ public class RobotContainer
       driverXbox.back().whileTrue(Commands.none());
       // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       // driverXbox.rightBumper().onTrue(Commands.none());
-    }
+    //}
     
 
     configureMechanicsBindings();
