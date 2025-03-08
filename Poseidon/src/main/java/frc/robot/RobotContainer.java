@@ -218,13 +218,14 @@ public class RobotContainer
 
       // CoralPivot: Complete instantaneous commands to control pivot position in Degrees.
       mechanicXbox.x().onTrue( new CoralPivotPositionCommand( coralPivot, 75.29 ) );
-      mechanicXbox.b().onTrue( new CoralPivotPositionCommand( coralPivot, 250.29 ) );
+      mechanicXbox.b().onTrue( new CoralPivotPositionCommand( coralPivot, 240.29 ) );
 
       // CoralIntake: X button for intake at constant speed, A button for outtake at constant speed.
       mechanicXbox.leftTrigger().whileTrue(new CoralIntakeDutyCommand(
-          coralIntake, () -> mechanicXbox.getLeftTriggerAxis() - mechanicXbox.getRightTriggerAxis()));
-      mechanicXbox.rightTrigger().whileTrue(new CoralIntakeDutyCommand(
-          coralIntake, () -> mechanicXbox.getLeftTriggerAxis() - mechanicXbox.getRightTriggerAxis()));
+        coralIntake, () -> mechanicXbox.getLeftTriggerAxis() * 0.5));
+    
+    mechanicXbox.rightTrigger().whileTrue(new CoralIntakeDutyCommand(
+        coralIntake, () -> -mechanicXbox.getRightTriggerAxis() * 1.0));
 
       // Climb: Y button for climbing up, B button for lowering.
       climb.setDefaultCommand(
