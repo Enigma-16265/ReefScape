@@ -5,6 +5,10 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
+
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -307,11 +311,18 @@ public class RobotContainer
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand()
+ /*  public Command getAutonomousCommand()
   {
+    
     // An example command will be run in autonomous
-    return drivebase.getAutonomousCommand("Test Auto");
+    return new PathPlannerAuto("Auton")
+    .andThen(Elevato)
+    
+
+    
   }
+    */
+  
 
   public void setMotorBrake(boolean brake)
   {
