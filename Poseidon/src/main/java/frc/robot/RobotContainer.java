@@ -27,6 +27,7 @@ import frc.robot.commands.coral_pivot.CoralPivotHoldCommand;
 import frc.robot.commands.coral_pivot.CoralPivotPositionCommand;
 import frc.robot.commands.elevator.ElevatorHoldCommand;
 import frc.robot.commands.elevator.ElevatorPositionCommand;
+import frc.robot.commands.elevator.ElevatorPositionStopCommand;
 import frc.robot.subsystems.AlgaeIntake;
 import frc.robot.subsystems.AlgaePivot;
 import frc.robot.subsystems.Climb;
@@ -214,7 +215,7 @@ public class RobotContainer
       mechanicXbox.povLeft().onTrue( new ElevatorPositionCommand( elevator, 60.96 ) );
       mechanicXbox.povRight().onTrue( new ElevatorPositionCommand( elevator, 60.96 ) );
       mechanicXbox.povUp().onTrue( new ElevatorPositionCommand( elevator, 147.32 ) );
-      mechanicXbox.povDown().onTrue( new ElevatorPositionCommand( elevator, 0.0 ) );
+      mechanicXbox.povDown().onTrue( new ElevatorPositionStopCommand( elevator, 0.0, 5.0 ) );
 
       // CoralPivot: Complete instantaneous commands to control pivot position in Degrees.
       mechanicXbox.x().onTrue( new CoralPivotPositionCommand( coralPivot, 85.75 ) );
