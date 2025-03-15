@@ -39,9 +39,14 @@ public class CoralPivot extends SubsystemBase
     public static final double kCurrentThreshold = 20.0;
     
     // PID tuning parameters for position control (to be tuned)
-    private static final double kP_pos = 0.01;
+    
+    // P: 0.015
+    // I: 0.0
+    // D: 3.0 or 0.85
+
+    private static final double kP_pos = 0.015;
     private static final double kI_pos = 0.0;
-    private static final double kD_pos = 0.75;
+    private static final double kD_pos = 0.85;
    
     // Flags to enable/disable safety checks
     private boolean encoderCheckEnabled = false;
@@ -73,8 +78,8 @@ public class CoralPivot extends SubsystemBase
         // Configure PID parameters and output limits.
         m_pivotSparkMaxConfig.closedLoop.pid(kP_pos, kI_pos, kD_pos);
         m_pivotSparkMaxConfig.closedLoop.outputRange(-1.0, 1.0);
-        m_pivotSparkMaxConfig.closedLoop.maxMotion.maxAcceleration( 50000.0 );
-        m_pivotSparkMaxConfig.closedLoop.maxMotion.maxVelocity( 50000.0 );        
+        m_pivotSparkMaxConfig.closedLoop.maxMotion.maxAcceleration( 80000.0 );
+        m_pivotSparkMaxConfig.closedLoop.maxMotion.maxVelocity( 80000.0 );        
         
         m_pivotSparkMax = new SparkMax(kPivotMotorCanId, MotorType.kBrushless);
         m_pivotSparkMax.configure(m_pivotSparkMaxConfig, null, null);
