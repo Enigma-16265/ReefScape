@@ -58,6 +58,13 @@ public class CoralPivot extends SubsystemBase
 
         m_pivotSparkMaxConfig.idleMode( IdleMode.kBrake );
 
+        /*
+        m_pivotSparkMaxConfig.softLimit.forwardSoftLimit( 0.0 );
+        m_pivotSparkMaxConfig.softLimit.forwardSoftLimitEnabled( true );
+        m_pivotSparkMaxConfig.softLimit.reverseSoftLimit( 0.0 );
+        m_pivotSparkMaxConfig.softLimit.reverseSoftLimitEnabled( true );
+        */
+
         // Configure conversion factors: position conversion factor accounts for gear reduction.
         m_pivotSparkMaxConfig.encoder.positionConversionFactor( kPivotGearRatio * 360.0 );
         // Velocity conversion: raw rotations per second * 60 = RPM, then account for gear reduction.
