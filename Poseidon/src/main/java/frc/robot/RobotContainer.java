@@ -14,6 +14,9 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -214,7 +217,19 @@ public class RobotContainer
       // Elevator: Set default command to continuously control elevator speed.
       mechanicXbox.povLeft().onTrue( new ElevatorPositionCommand( elevator, 60.96 ) );
       mechanicXbox.povRight().onTrue( new ElevatorPositionCommand( elevator, 60.96 ) );
-      mechanicXbox.povUp().onTrue( new ElevatorPositionCommand( elevator, 147.32 ) );
+      
+      //mechanicXbox.povUp().onTrue( new ElevatorPositionCommand( elevator, 147.32 ) );
+      mechanicXbox.povUp().onTrue(
+          new ParallelCommandGroup(
+              new ElevatorPositionCommand( elevator, 147.32 ),
+              new ConditionalCommand(
+                  new CoralPivotPositionCommand( coralPivot, 250.0 ), // runs if condition true
+                  new InstantCommand(() -> {},  coralPivot ),                        // does nothing if condition false
+                  () -> coralPivot.getPosition() > 220.0                             // lambda condition check
+              )
+          )
+      );
+
       mechanicXbox.povDown().onTrue( new ElevatorPositionStopCommand( elevator, 0.0, 5.0 ) );
 
       // CoralPivot: Complete instantaneous commands to control pivot position in Degrees.
