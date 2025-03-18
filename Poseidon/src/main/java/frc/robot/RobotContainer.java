@@ -48,6 +48,8 @@ import swervelib.SwerveInputStream;
  */
 public class RobotContainer
 {
+  static final double DriveDefaultScale = 0.8;
+  static final double DriveDefaultSlow  = 0.5;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final         CommandXboxController driverXbox = new CommandXboxController(0);
@@ -58,13 +60,13 @@ public class RobotContainer
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
-  SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                () -> driverXbox.getLeftY() * -1,
-                                                                () -> driverXbox.getLeftX() * -1)
-                                                            .withControllerRotationAxis(driverXbox::getRightX)
-                                                            .deadband(OperatorConstants.DEADBAND)
-                                                            .scaleTranslation(0.8)
-                                                            .allianceRelativeControl(true);
+  SwerveInputStream driveAngularVelocity = SwerveInputStream.of( drivebase.getSwerveDrive(),
+                                                                 () -> driverXbox.getLeftY() * -1,
+                                                                 () -> driverXbox.getLeftX() * -1 )
+                                                            .withControllerRotationAxis( driverXbox::getRightX )
+                                                            .deadband( OperatorConstants.DEADBAND )
+                                                            .scaleTranslation( DriveDefaultScale )
+                                                            .allianceRelativeControl( true );
 
   /**
    * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
@@ -184,6 +186,17 @@ public class RobotContainer
       driverXbox.back().whileTrue(Commands.none());
       // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       // driverXbox.rightBumper().onTrue(Commands.none());
+
+      driverXbox.rightBumper().onTrue( new InstantCommand( () -> {
+          driveAngularVelocity.scaleTranslation( DriveDefaultSlow );
+        } )
+      );
+  
+      driverXbox.rightBumper().onFalse( new InstantCommand( () -> {
+          driveAngularVelocity.scaleTranslation( DriveDefaultScale );
+        } )
+      );
+
     }
     
 
