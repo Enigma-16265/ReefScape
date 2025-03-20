@@ -229,16 +229,26 @@ public class RobotContainer
 
       // Elevator: Set default command to continuously control elevator speed.
       mechanicXbox.povLeft().onTrue( new ElevatorPositionCommand( elevator, 60.96 ) );
-      mechanicXbox.povRight().onTrue( new ElevatorPositionCommand( elevator, 60.96 ) );
+      //mechanicXbox.povRight().onTrue( new ElevatorPositionCommand( elevator, 60.96 ) );
+      mechanicXbox.povRight().onTrue(
+          new ParallelCommandGroup(
+              new ElevatorPositionCommand( elevator, 61.0 ),
+              new ConditionalCommand(
+                  new CoralPivotPositionCommand( coralPivot, 225.0 ), // runs if condition true
+                  new InstantCommand(() -> {},  coralPivot ),                        // does nothing if condition false
+                  () -> coralPivot.getPosition() > 215.0                             // lambda condition check
+              )
+          )
+      );
       
       //mechanicXbox.povUp().onTrue( new ElevatorPositionCommand( elevator, 147.32 ) );
       mechanicXbox.povUp().onTrue(
           new ParallelCommandGroup(
               new ElevatorPositionCommand( elevator, 147.32 ),
               new ConditionalCommand(
-                  new CoralPivotPositionCommand( coralPivot, 250.0 ), // runs if condition true
+                  new CoralPivotPositionCommand( coralPivot, 240.0 ), // runs if condition true
                   new InstantCommand(() -> {},  coralPivot ),                        // does nothing if condition false
-                  () -> coralPivot.getPosition() > 220.0                             // lambda condition check
+                  () -> coralPivot.getPosition() > 215.0                             // lambda condition check
               )
           )
       );
@@ -246,9 +256,9 @@ public class RobotContainer
       mechanicXbox.povDown().onTrue( new ElevatorPositionStopCommand( elevator, 0.0, 5.0 ) );
 
       // CoralPivot: Complete instantaneous commands to control pivot position in Degrees.
-      mechanicXbox.x().onTrue( new CoralPivotPositionCommand( coralPivot, 85.75 ) );
+      mechanicXbox.x().onTrue( new CoralPivotPositionCommand( coralPivot, 58.0 ) );
       // mechanicXbox.b().onTrue( new CoralPivotPositionCommand( coralPivot, 270.0 ) );
-      mechanicXbox.b().onTrue( new CoralPivotPositionCommand( coralPivot, 250.0 ) );
+      mechanicXbox.b().onTrue( new CoralPivotPositionCommand( coralPivot, 240.0 ) );
 
       // CoralIntake: X button for intake at constant speed, A button for outtake at constant speed.
       mechanicXbox.leftTrigger().whileTrue(new CoralIntakeDutyCommand(
