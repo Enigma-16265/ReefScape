@@ -7,6 +7,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.MathUtil;
@@ -57,9 +58,12 @@ public class Climb extends SubsystemBase
     public Climb()
     {
         m_climbSparkMaxConfig = new SparkMaxConfig();
+
+        m_climbSparkMaxConfig.idleMode( IdleMode.kBrake );
+
         // Configure the encoder conversion factors.
-        m_climbSparkMaxConfig.encoder.positionConversionFactor(kClimbGearRatio);
-        m_climbSparkMaxConfig.encoder.velocityConversionFactor(kClimbGearRatio * 60.0);
+        m_climbSparkMaxConfig.encoder.positionConversionFactor( kClimbGearRatio * 360.0 );
+        m_climbSparkMaxConfig.encoder.velocityConversionFactor( kClimbGearRatio * 60.0 );
 
         // Set PID parameters and output limits.
         m_climbSparkMaxConfig.closedLoop.pid(kP, kI, kD);
@@ -94,26 +98,34 @@ public class Climb extends SubsystemBase
     }
 
     /**
-     * Directly sets the motor output while enforcing a current draw safety check.
+     * Directly sets the motor output while enforcing current draw and position limits.
      *
      * @param speed the motor output (-1.0 to 1.0)
      */
     public void setSpeed( double speed )
     {
-        if ( currentCheckEnabled )
+        double currentPosition = m_climbEncoder.getPosition();
+        double currentDraw     = m_climbSparkMax.getOutputCurrent();
+
+        // Check encoder position limits
+        if (encoderCheckEnabled)
         {
-            double currentDraw = m_climbSparkMax.getOutputCurrent();
-            if ( currentDraw > kCurrentThreshold )
+            if ( ( currentPosition >= kMaxRotPos && speed > 0.0 ) ||
+                 ( currentPosition <= kMinRotPos && speed < 0.0 )    )
             {
-                m_climbSparkMax.set( 0.0 );
-                return;
+                speed = 0.0;
             }
         }
 
-        cmdLog.publish( "speed", speed );
+        // Check current draw limits
+        if ( currentCheckEnabled && currentDraw > kCurrentThreshold )
+        {
+            speed = 0.0;
+        }
 
+        // Single motor command call
         m_climbSparkMax.set( speed );
-
+        cmdLog.publish( "speed", speed );
     }
 
     /**
