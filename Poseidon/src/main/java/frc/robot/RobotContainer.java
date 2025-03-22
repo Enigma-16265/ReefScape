@@ -187,12 +187,12 @@ public class RobotContainer
       // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       // driverXbox.rightBumper().onTrue(Commands.none());
 
-      driverXbox.rightBumper().onTrue( new InstantCommand( () -> {
+      driverXbox.rightStick().onTrue( new InstantCommand( () -> {
           driveAngularVelocity.scaleTranslation( DriveDefaultSlow );
         } )
       );
   
-      driverXbox.rightBumper().onFalse( new InstantCommand( () -> {
+      driverXbox.rightStick().onFalse( new InstantCommand( () -> {
           driveAngularVelocity.scaleTranslation( DriveDefaultScale );
         } )
       );
@@ -228,13 +228,13 @@ public class RobotContainer
           algaeIntake, () -> driverXbox.getLeftTriggerAxis() - driverXbox.getRightTriggerAxis()));
 
       // Elevator: Set default command to continuously control elevator speed.
-      mechanicXbox.povLeft().onTrue( new ElevatorPositionCommand( elevator, 60.96 ) );
+      // mechanicXbox.povLeft().onTrue( new ElevatorPositionCommand( elevator, 60.96 ) );
       //mechanicXbox.povRight().onTrue( new ElevatorPositionCommand( elevator, 60.96 ) );
       mechanicXbox.povRight().onTrue(
           new ParallelCommandGroup(
               new ElevatorPositionCommand( elevator, 61.0 ),
               new ConditionalCommand(
-                  new CoralPivotPositionCommand( coralPivot, 225.0 ), // runs if condition true
+                  new CoralPivotPositionCommand( coralPivot, 245.0 ), // runs if condition true
                   new InstantCommand(() -> {},  coralPivot ),                        // does nothing if condition false
                   () -> coralPivot.getPosition() > 215.0                             // lambda condition check
               )
@@ -246,19 +246,30 @@ public class RobotContainer
           new ParallelCommandGroup(
               new ElevatorPositionCommand( elevator, 147.32 ),
               new ConditionalCommand(
-                  new CoralPivotPositionCommand( coralPivot, 240.0 ), // runs if condition true
+                  new CoralPivotPositionCommand( coralPivot, 249.0 ), // runs if condition true
                   new InstantCommand(() -> {},  coralPivot ),                        // does nothing if condition false
                   () -> coralPivot.getPosition() > 215.0                             // lambda condition check
               )
           )
       );
-
+/*
+      mechanicXbox.povDown().onTrue(
+          new ParallelCommandGroup(
+              new ElevatorPositionStopCommand( elevator, 0.0, 5.0 ),
+              new ConditionalCommand(
+                  new CoralPivotPositionCommand( coralPivot, 60.0 ), // runs if condition true
+                  new InstantCommand(() -> {},  coralPivot ),                        // does nothing if condition false
+                  () -> coralPivot.getPosition() > 215.0                             // lambda condition check
+              )
+          )
+      );
+*/      
       mechanicXbox.povDown().onTrue( new ElevatorPositionStopCommand( elevator, 0.0, 5.0 ) );
 
       // CoralPivot: Complete instantaneous commands to control pivot position in Degrees.
       mechanicXbox.x().onTrue( new CoralPivotPositionCommand( coralPivot, 58.0 ) );
       // mechanicXbox.b().onTrue( new CoralPivotPositionCommand( coralPivot, 270.0 ) );
-      mechanicXbox.b().onTrue( new CoralPivotPositionCommand( coralPivot, 240.0 ) );
+      mechanicXbox.b().onTrue( new CoralPivotPositionCommand( coralPivot, 245.0 ) );
 
       // CoralIntake: X button for intake at constant speed, A button for outtake at constant speed.
       mechanicXbox.leftTrigger().whileTrue(new CoralIntakeDutyCommand(
