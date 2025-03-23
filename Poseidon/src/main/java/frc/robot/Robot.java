@@ -55,9 +55,12 @@ public class Robot extends TimedRobot
     m_robotContainer = new RobotContainer();
 
     UsbCamera cameraOne = CameraServer.startAutomaticCapture( 0 );
-
     cameraOne.setResolution( 160, 90 );
     cameraOne.setFPS( 10 );
+
+    UsbCamera cameraTwo = CameraServer.startAutomaticCapture( 0 );
+    cameraTwo.setResolution( 160, 90 );
+    cameraTwo.setFPS( 10 );
 
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
