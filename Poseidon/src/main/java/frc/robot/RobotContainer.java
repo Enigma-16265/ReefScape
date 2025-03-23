@@ -232,9 +232,9 @@ public class RobotContainer
       //mechanicXbox.povRight().onTrue( new ElevatorPositionCommand( elevator, 60.96 ) );
       mechanicXbox.povRight().onTrue(
           new ParallelCommandGroup(
-              new ElevatorPositionCommand( elevator, 61.0 ),
+              new ElevatorPositionCommand( elevator, 81.3 ),
               new ConditionalCommand(
-                  new CoralPivotPositionCommand( coralPivot, 245.0 ), // runs if condition true
+                  new CoralPivotPositionCommand( coralPivot, 240.0 ), // runs if condition true
                   new InstantCommand(() -> {},  coralPivot ),                        // does nothing if condition false
                   () -> coralPivot.getPosition() > 215.0                             // lambda condition check
               )
@@ -244,30 +244,30 @@ public class RobotContainer
       //mechanicXbox.povUp().onTrue( new ElevatorPositionCommand( elevator, 147.32 ) );
       mechanicXbox.povUp().onTrue(
           new ParallelCommandGroup(
-              new ElevatorPositionCommand( elevator, 147.32 ),
+              new ElevatorPositionCommand( elevator, 169.0 ),
               new ConditionalCommand(
-                  new CoralPivotPositionCommand( coralPivot, 249.0 ), // runs if condition true
+                  new CoralPivotPositionCommand( coralPivot, 240.0 ), // runs if condition true
                   new InstantCommand(() -> {},  coralPivot ),                        // does nothing if condition false
                   () -> coralPivot.getPosition() > 215.0                             // lambda condition check
               )
           )
       );
-/*
+///*
       mechanicXbox.povDown().onTrue(
           new ParallelCommandGroup(
               new ElevatorPositionStopCommand( elevator, 0.0, 5.0 ),
               new ConditionalCommand(
-                  new CoralPivotPositionCommand( coralPivot, 60.0 ), // runs if condition true
+                  new CoralPivotPositionCommand( coralPivot, 224.0 ), // runs if condition true (60)
                   new InstantCommand(() -> {},  coralPivot ),                        // does nothing if condition false
                   () -> coralPivot.getPosition() > 215.0                             // lambda condition check
               )
           )
       );
-*/      
-      mechanicXbox.povDown().onTrue( new ElevatorPositionStopCommand( elevator, 0.0, 5.0 ) );
+// */      
+      //mechanicXbox.povDown().onTrue( new ElevatorPositionStopCommand( elevator, 0.0, 5.0 ) );
 
       // CoralPivot: Complete instantaneous commands to control pivot position in Degrees.
-      mechanicXbox.x().onTrue( new CoralPivotPositionCommand( coralPivot, 58.0 ) );
+      mechanicXbox.x().onTrue( new CoralPivotPositionCommand( coralPivot, 60.0 ) );
       // mechanicXbox.b().onTrue( new CoralPivotPositionCommand( coralPivot, 270.0 ) );
       mechanicXbox.b().onTrue( new CoralPivotPositionCommand( coralPivot, 245.0 ) );
 

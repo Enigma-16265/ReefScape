@@ -8,6 +8,7 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -64,6 +65,8 @@ public class Climb extends SubsystemBase
         // Set PID parameters and output limits.
         m_climbSparkMaxConfig.closedLoop.pid(kP, kI, kD);
         m_climbSparkMaxConfig.closedLoop.outputRange(-1.0, 1.0);
+
+        m_climbSparkMaxConfig.idleMode(IdleMode.kBrake);
 
         m_climbSparkMax = new SparkMax(kClimbMotorCanId, MotorType.kBrushless);
         m_climbSparkMax.configure(m_climbSparkMaxConfig, null, null);
