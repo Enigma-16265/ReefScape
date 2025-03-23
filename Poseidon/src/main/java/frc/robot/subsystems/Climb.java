@@ -37,8 +37,8 @@ public class Climb extends SubsystemBase
     public static final int    kClimbMotorCanId  = 23;
     public static final double kClimbGearRatio   = 1.0 / 125.0; // Example: 1:1 gear ratio
     public static final double kNoLoadRpm        = 5500 * kClimbGearRatio;
-    public static final double kMinRotPos        = 0.0;
-    public static final double kMaxRotPos        = 20.0;
+    public static final double kMinDeg           = 0.0;
+    public static final double kMaxDeg           = 20.0;
     public static final double kCurrentThreshold = 20.0;
 
     // PID tuning parameters (to be tuned later)
@@ -113,8 +113,8 @@ public class Climb extends SubsystemBase
         // Check encoder position limits
         if (encoderCheckEnabled)
         {
-            if ( ( currentPosition >= kMaxRotPos && speed > 0.0 ) ||
-                 ( currentPosition <= kMinRotPos && speed < 0.0 )    )
+            if ( ( currentPosition >= kMaxDeg && speed > 0.0 ) ||
+                 ( currentPosition <= kMinDeg && speed < 0.0 )    )
             {
                 speed = 0.0;
             }
@@ -146,11 +146,11 @@ public class Climb extends SubsystemBase
         {
             double currentPosition = m_climbEncoder.getPosition();
             // Prevent driving further past the physical limits.
-            if (targetPosition > currentPosition && currentPosition >= kMaxRotPos)
+            if (targetPosition > currentPosition && currentPosition >= kMaxDeg)
             {
                 targetPosition = currentPosition;
             }
-            else if (targetPosition < currentPosition && currentPosition <= kMinRotPos)
+            else if (targetPosition < currentPosition && currentPosition <= kMinDeg)
             {
                 targetPosition = currentPosition;
             }
@@ -167,7 +167,7 @@ public class Climb extends SubsystemBase
         }
     
         // Clamp the target position just before commanding the motor.
-        targetPosition = MathUtil.clamp(targetPosition, kMinRotPos, kMaxRotPos);
+        targetPosition = MathUtil.clamp(targetPosition, kMinDeg, kMaxDeg);
 
         cmdLog.publish( "position", position );
 
