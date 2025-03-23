@@ -59,6 +59,7 @@ public class Elevator extends SubsystemBase
     private final RelativeEncoder m_elevatorEncoder;
     private final SparkClosedLoopController m_elevatorClosedLoopController;
 
+    // Potential FF 0.25
     public Elevator()
     {
         // Create and configure the master config.
@@ -77,8 +78,9 @@ public class Elevator extends SubsystemBase
 
         m_elevatorMasterConfig.closedLoop.pid(kP, kI, kD);
         m_elevatorMasterConfig.closedLoop.outputRange(-1.0, 1.0);
-        m_elevatorMasterConfig.closedLoop.maxMotion.maxAcceleration( 25000 );
-        m_elevatorMasterConfig.closedLoop.maxMotion.maxVelocity( 15000 );
+        m_elevatorMasterConfig.closedLoop.velocityFF( 0.25 );
+        m_elevatorMasterConfig.closedLoop.maxMotion.maxAcceleration( 1 );
+        m_elevatorMasterConfig.closedLoop.maxMotion.maxVelocity( 1 );
 
         // Create and configure the follower config.
         m_elevatorFollowerConfig = new SparkFlexConfig();
