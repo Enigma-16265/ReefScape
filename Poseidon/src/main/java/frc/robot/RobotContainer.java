@@ -5,31 +5,20 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.algae_intake.AlgaeIntakeDutyCommand;
 import frc.robot.commands.algae_pivot.AlgaePivotPositionCommand;
-import frc.robot.commands.climb.ClimbHoldCommand;
 import frc.robot.commands.climb.ClimbPositionCommand;
 import frc.robot.commands.coral_intake.CoralIntakeDutyCommand;
-import frc.robot.commands.coral_intake.CoralIntakeHoldCommand;
-import frc.robot.commands.coral_pivot.CoralPivotHoldCommand;
 import frc.robot.commands.coral_pivot.CoralPivotPositionCommand;
-import frc.robot.commands.elevator.ElevatorHoldCommand;
 import frc.robot.commands.elevator.ElevatorPositionCommand;
 import frc.robot.commands.elevator.ElevatorPositionStopCommand;
 import frc.robot.subsystems.AlgaeIntake;
@@ -130,166 +119,129 @@ public class RobotContainer
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
   }
 
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary predicate, or via the
-   * named factories in {@link edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
-   * {@link CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller PS4}
-   * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
-   */
   private void configureBindings()
   {
 
-    
-    Command driveFieldOrientedDirectAngle      = drivebase.driveFieldOriented(driveDirectAngle);
-    Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
-    Command driveRobotOrientedAngularVelocity  = drivebase.driveFieldOriented(driveRobotOriented);
-    Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(
-        driveDirectAngle);
-    Command driveFieldOrientedDirectAngleKeyboard      = drivebase.driveFieldOriented(driveDirectAngleKeyboard);
-    Command driveFieldOrientedAnglularVelocityKeyboard = drivebase.driveFieldOriented(driveAngularVelocityKeyboard);
-    Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(
-        driveDirectAngleKeyboard);
-
-    if (RobotBase.isSimulation())
-    {
-      drivebase.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
-    } else
-    {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
-    }
-
-    if (Robot.isSimulation())
-    {
-      driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-      driverXbox.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
-
-    }
-    if (DriverStation.isTest())
-    {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
-
-      driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverXbox.y().whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
-      driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driverXbox.back().whileTrue(drivebase.centerModulesCommand());
-      // driverXbox.leftBumper().onTrue(Commands.none());
-      // driverXbox.rightBumper().onTrue(Commands.none());
-    } else
-    {
-      driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      // driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-      // driverXbox.b().whileTrue(
-      //     drivebase.driveToPose(
-      //         new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
-      //                         );
-      // driverXbox.start().whileTrue(Commands.none());
-      // driverXbox.back().whileTrue(Commands.none());
-      // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      // driverXbox.rightBumper().onTrue(Commands.none());
-
-      driverXbox.povUp().onTrue( new InstantCommand( () -> {
-          driveAngularVelocity.scaleTranslation( DriveDefaultSlow );
-        } )
-      );
-  
-      driverXbox.povUp().onFalse( new InstantCommand( () -> {
-          driveAngularVelocity.scaleTranslation( DriveDefaultScale );
-        } )
-      );
-
-    }
-    
-
+    configureDriverBindings();
     configureMechanicsBindings();
     //configureMechanicsTestBindings();
 
   }
 
-  // Controller 2 mapping
+  /*
+    Driver:
+    1. LT/RT - Algae Intake
+    2. LB/RB - Algae Pivot
+    3. X - Free
+    4. A - Zero drive train Gyro
+    5. B - Free
+    6. Y - Free
+    7. Start - Free
+    8. Back - Free
+    9. POV Up (DPad) - Hold Slow Mode
+  */
+  private void configureDriverBindings()
+  {
 
-  // Move Algae to Driver controller
-  // AlgaePivot  - L/R bumper  : R set's position in Revs to 0, L set's position in Revs to 25
-  // AlgaeIntake - L/R trigger : R provides speed to intake, L provides speed to outtake
+    Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
+    drivebase.setDefaultCommand( driveFieldOrientedAnglularVelocity );
 
-  // Elevator    - Left Thumb  : Up provides speed to lift, Down provides speed to drop
-  // CoralPivot  - X/A : X moved to up Position , A 
-  // CoralIntake - L/R Trigger : L provides speed to intake, R provides speed to outtake
-  // Climb       - Y/B buttons : Y provides constant speed to climb, B provides constant speed to let down
-  void configureMechanicsBindings() {
-      // AlgaePivot preset positions: 
-      // Left bumper sets pivot to 25 revolutions, Right bumper sets pivot to 0.
-      driverXbox.leftBumper().onTrue(new AlgaePivotPositionCommand(algaePivot, 0.0));
-      driverXbox.rightBumper().onTrue(new AlgaePivotPositionCommand(algaePivot, 47.0));
+    driverXbox.a().onTrue( ( Commands.runOnce( drivebase::zeroGyro ) ) );
 
-      // AlgaeIntake: Left and right triggers control intake/outtake speed.
-      driverXbox.leftTrigger().whileTrue(new AlgaeIntakeDutyCommand(
-          algaeIntake, () -> driverXbox.getLeftTriggerAxis() - driverXbox.getRightTriggerAxis()));
-      driverXbox.rightTrigger().whileTrue(new AlgaeIntakeDutyCommand(
-          algaeIntake, () -> driverXbox.getLeftTriggerAxis() - driverXbox.getRightTriggerAxis()));
+    // AlgaePivot preset positions: 
+    // Left bumper sets pivot to 25 revolutions, Right bumper sets pivot to 0.
+    driverXbox.leftBumper().onTrue(new AlgaePivotPositionCommand( algaePivot, 0.0 ) );
+    driverXbox.rightBumper().onTrue(new AlgaePivotPositionCommand( algaePivot, 47.0 ) );
 
-      // Elevator: Set default command to continuously control elevator speed.
-      // mechanicXbox.povLeft().onTrue( new ElevatorPositionCommand( elevator, 60.96 ) );
-      //mechanicXbox.povRight().onTrue( new ElevatorPositionCommand( elevator, 60.96 ) );
-      mechanicXbox.povRight().onTrue(
-          new ParallelCommandGroup(
-              new ElevatorPositionCommand( elevator, 81.3 ),
-              new ConditionalCommand(
-                  new CoralPivotPositionCommand( coralPivot, 240.0 ), // runs if condition true
-                  new InstantCommand(() -> {},  coralPivot ),                        // does nothing if condition false
-                  () -> coralPivot.getPosition() > 215.0                             // lambda condition check
-              )
-          )
-      );
+    // AlgaeIntake: Left and right triggers control intake/outtake speed.
+    driverXbox.leftTrigger().whileTrue(new AlgaeIntakeDutyCommand(
+        algaeIntake, () -> driverXbox.getLeftTriggerAxis() - driverXbox.getRightTriggerAxis()));
+    driverXbox.rightTrigger().whileTrue(new AlgaeIntakeDutyCommand(
+        algaeIntake, () -> driverXbox.getLeftTriggerAxis() - driverXbox.getRightTriggerAxis()));    
+
+    driverXbox.povUp().onTrue( new InstantCommand( () -> {
+        driveAngularVelocity.scaleTranslation( DriveDefaultSlow );
+      } )
+    );
+
+    driverXbox.povUp().onFalse( new InstantCommand( () -> {
+        driveAngularVelocity.scaleTranslation( DriveDefaultScale );
+      } )
+    );
+
+  }
+
+  /*
+    Mechanics:
+    1. POV Right (DPad) - Elevator mid level
+    2. POV Up (DPad) - Elevator high level
+    3. POV Down (DPad) - Elevator low level
+    4. X - Coral intake position
+    5. B - Coral low position
+    6. LT/RT - Coral Intake/Outake
+    7. LB/RB - Pull Up/Pull Down the Climb
+    8. Right Stick - Lift/Climb Adjustment
+ */
+  void configureMechanicsBindings()
+  {
+
+    // Elevator: Set default command to continuously control elevator speed.
+    mechanicXbox.povRight().onTrue(
+        new ParallelCommandGroup(
+            new ElevatorPositionCommand( elevator, 81.3 ),
+            new ConditionalCommand(
+                new CoralPivotPositionCommand( coralPivot, 240.0 ), // runs if condition true
+                new InstantCommand(() -> {},  coralPivot ),                        // does nothing if condition false
+                () -> coralPivot.getPosition() > 215.0                             // lambda condition check
+            )
+        )
+    );
       
-      //mechanicXbox.povUp().onTrue( new ElevatorPositionCommand( elevator, 147.32 ) );
-      mechanicXbox.povUp().onTrue(
-          new ParallelCommandGroup(
-              new ElevatorPositionCommand( elevator, 169.0 ),
-              new ConditionalCommand(
-                  new CoralPivotPositionCommand( coralPivot, 240.0 ), // runs if condition true
-                  new InstantCommand(() -> {},  coralPivot ),                        // does nothing if condition false
-                  () -> coralPivot.getPosition() > 215.0                             // lambda condition check
-              )
-          )
-      );
-///*
-      mechanicXbox.povDown().onTrue(
-          new ParallelCommandGroup(
-              new ElevatorPositionStopCommand( elevator, 0.0, 5.0 ),
-              new ConditionalCommand(
-                  new CoralPivotPositionCommand( coralPivot, 224.0 ), // runs if condition true (60)
-                  new InstantCommand(() -> {},  coralPivot ),                        // does nothing if condition false
-                  () -> coralPivot.getPosition() > 215.0                             // lambda condition check
-              )
-          )
-      );
-// */      
-      //mechanicXbox.povDown().onTrue( new ElevatorPositionStopCommand( elevator, 0.0, 5.0 ) );
+    //mechanicXbox.povUp().onTrue( new ElevatorPositionCommand( elevator, 147.32 ) );
+    mechanicXbox.povUp().onTrue(
+        new ParallelCommandGroup(
+            new ElevatorPositionCommand( elevator, 169.0 ),
+            new ConditionalCommand(
+                new CoralPivotPositionCommand( coralPivot, 240.0 ), // runs if condition true
+                new InstantCommand(() -> {},  coralPivot ),                        // does nothing if condition false
+                () -> coralPivot.getPosition() > 215.0                             // lambda condition check
+            )
+        )
+    );
 
-      // CoralPivot: Complete instantaneous commands to control pivot position in Degrees.
-      mechanicXbox.x().onTrue( new CoralPivotPositionCommand( coralPivot, 60.0 ) );
-      // mechanicXbox.b().onTrue( new CoralPivotPositionCommand( coralPivot, 270.0 ) );
-      mechanicXbox.b().onTrue( new CoralPivotPositionCommand( coralPivot, 245.0 ) );
+    mechanicXbox.povDown().onTrue(
+        new ParallelCommandGroup(
+            new ElevatorPositionStopCommand( elevator, 0.0, 5.0 ),
+            new ConditionalCommand(
+                new CoralPivotPositionCommand( coralPivot, 224.0 ), // runs if condition true (60)
+                new InstantCommand(() -> {},  coralPivot ),                        // does nothing if condition false
+                () -> coralPivot.getPosition() > 215.0                             // lambda condition check
+            )
+        )
+    );
 
-      // CoralIntake: X button for intake at constant speed, A button for outtake at constant speed.
-      mechanicXbox.leftTrigger().whileTrue(new CoralIntakeDutyCommand(
-        coralIntake, () -> mechanicXbox.getLeftTriggerAxis() * 0.5));
+    // CoralPivot: Complete instantaneous commands to control pivot position in Degrees.
+    mechanicXbox.x().onTrue( new CoralPivotPositionCommand( coralPivot, 60.0 ) );
+    mechanicXbox.b().onTrue( new CoralPivotPositionCommand( coralPivot, 245.0 ) );
+
+    // CoralIntake: X button for intake at constant speed, A button for outtake at constant speed.
+    mechanicXbox.leftTrigger().whileTrue( new CoralIntakeDutyCommand(
+      coralIntake, () -> mechanicXbox.getLeftTriggerAxis() * 0.5));
     
     mechanicXbox.rightTrigger().whileTrue(new CoralIntakeDutyCommand(
         coralIntake, () -> -mechanicXbox.getRightTriggerAxis() * 1.0));
 
-      // Climb: Y button for climbing up, B button for lowering.
-      climb.setDefaultCommand(
-        new frc.robot.commands.climb.ClimbDutyCommand(
-            climb, 
-            () -> mechanicXbox.getRightY(),
-            0.5
-        )
+    // Climb: Y button for climbing up, B button for lowering.
+    climb.setDefaultCommand(
+      new frc.robot.commands.climb.ClimbDutyCommand(
+          climb, 
+          () -> mechanicXbox.getRightY(),
+          0.5
+      )
     );
 
-    mechanicXbox.leftBumper().onTrue(new ClimbPositionCommand( climb, 0));
-    mechanicXbox.rightBumper().onTrue(new ClimbPositionCommand( climb, 20));
+    mechanicXbox.leftBumper().onTrue( new ClimbPositionCommand( climb, 0 ) );
+    mechanicXbox.rightBumper().onTrue( new ClimbPositionCommand( climb, 20 ) );
 
   }
 
