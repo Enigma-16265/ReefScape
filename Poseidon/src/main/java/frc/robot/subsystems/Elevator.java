@@ -41,9 +41,9 @@ public class Elevator extends SubsystemBase
     public static final double kCurrentThreshold      = 20.0;
 
     // PID tuning parameters for position control (to be tuned)
-    private static final double kP = 0.03;
-    private static final double kI = 0.0;
-    private static final double kD = 0.05;
+    private static final double kP = 1.0; //0.03
+    private static final double kI = 0.0;  //0.0
+    private static final double kD = 0.0; //0.05
 
     // Flags to enable/disable safety checks
     private boolean encoderCheckEnabled = false;
@@ -78,9 +78,9 @@ public class Elevator extends SubsystemBase
 
         m_elevatorMasterConfig.closedLoop.pid(kP, kI, kD);
         m_elevatorMasterConfig.closedLoop.outputRange(-1.0, 1.0);
-        m_elevatorMasterConfig.closedLoop.velocityFF( 0.25 );
-        m_elevatorMasterConfig.closedLoop.maxMotion.maxAcceleration( 1 );
-        m_elevatorMasterConfig.closedLoop.maxMotion.maxVelocity( 1 );
+        m_elevatorMasterConfig.closedLoop.velocityFF( 1.0 );
+        m_elevatorMasterConfig.closedLoop.maxMotion.maxAcceleration( 100 );
+        m_elevatorMasterConfig.closedLoop.maxMotion.maxVelocity( 50 );
 
         // Create and configure the follower config.
         m_elevatorFollowerConfig = new SparkFlexConfig();

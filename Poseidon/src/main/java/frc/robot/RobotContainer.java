@@ -124,9 +124,9 @@ public class RobotContainer
   private void configureBindings()
   {
 
-    configureDriverBindings();
-    configureMechanicsBindings();
-    // configureMechanicsTestBindings();
+    // configureDriverBindings();
+    // configureMechanicsBindings();
+    configureMechanicsTestBindings();
 
   }
 
@@ -299,13 +299,13 @@ public class RobotContainer
     // mechanicXbox.x().onTrue( new CoralPivotPositionCommand( coralPivot, 95.0 ) );
     // mechanicXbox.b().onTrue( new CoralPivotPositionCommand( coralPivot, 265.0 ) );
 
-    // elevator.setDefaultCommand(
-    //     new frc.robot.commands.elevator.ElevatorDutyCommand(
-    //         elevator, 
-    //         () -> -mechanicXbox.getRightY(),
-    //         0.1
-    //     )
-    // );
+    elevator.setDefaultCommand(
+        new frc.robot.commands.elevator.ElevatorDutyCommand(
+            elevator, 
+            () -> -mechanicXbox.getRightY(),
+            0.25
+        )
+    );
 
     // mechanicXbox.x().onTrue( new ElevatorPositionCommand( elevator, 25.4 ) );
     // mechanicXbox.a().onTrue( new ElevatorPositionCommand( elevator, 0.0 ) );  
