@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.algae_intake.AlgaeIntakeDutyCommand;
 import frc.robot.commands.algae_pivot.AlgaePivotPositionCommand;
+import frc.robot.commands.algae_pivot.AlgaePivotPositionStopCommand;
 import frc.robot.commands.climb.ClimbDutyCommand;
 import frc.robot.commands.climb.ClimbPositionCommand;
 import frc.robot.commands.coral_intake.CoralIntakeDutyCommand;
@@ -125,7 +126,7 @@ public class RobotContainer
 
     configureDriverBindings();
     configureMechanicsBindings();
-    //configureMechanicsTestBindings();
+    // configureMechanicsTestBindings();
 
   }
 
@@ -151,7 +152,7 @@ public class RobotContainer
 
     // AlgaePivot preset positions: 
     // Left bumper sets pivot to 25 revolutions, Right bumper sets pivot to 0.
-    driverXbox.leftBumper().onTrue(new AlgaePivotPositionCommand( algaePivot, 0.0 ) );
+    driverXbox.leftBumper().onTrue( new AlgaePivotPositionStopCommand( algaePivot, 0.0, 5.0 ) );
     driverXbox.rightBumper().onTrue(new AlgaePivotPositionCommand( algaePivot, 47.0 ) );
 
     // AlgaeIntake: Left and right triggers control intake/outtake speed.
@@ -267,8 +268,8 @@ public class RobotContainer
     //     )
     // );
 
-    // mechanicXbox.x().onTrue( new AlgaePivotPositionCommand( algaePivot, 45.0 ) );
-    // mechanicXbox.a().onTrue( new AlgaePivotPositionCommand( algaePivot, 0.0 ) );    
+    // mechanicXbox.x().onTrue( new AlgaePivotPositionCommand( algaePivot, 47.0 ) );
+    // mechanicXbox.a().onTrue( new AlgaePivotPositionStopCommand( algaePivot, 0.0, 5.0 ) );  
 
     // climb.setDefaultCommand(
     //     new frc.robot.commands.climb.ClimbDutyCommand(

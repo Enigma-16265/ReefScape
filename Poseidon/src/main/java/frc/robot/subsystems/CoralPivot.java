@@ -46,7 +46,7 @@ public class CoralPivot extends SubsystemBase
 
     private static final double kP_pos = 0.015;
     private static final double kI_pos = 0.0;
-    private static final double kD_pos = 0.85;
+    private static final double kD_pos = 0.89;
    
     // Flags to enable/disable safety checks
     private boolean encoderCheckEnabled = false;

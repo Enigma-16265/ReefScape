@@ -61,12 +61,13 @@ public class AlgaePivot extends SubsystemBase
 
         m_pivotSparkMaxConfig.idleMode( IdleMode.kBrake );
 
-        /*
-        m_pivotSparkMaxConfig.softLimit.forwardSoftLimit( 0.0 );
+        
+        m_pivotSparkMaxConfig.softLimit.forwardSoftLimit( 50.0 );
         m_pivotSparkMaxConfig.softLimit.forwardSoftLimitEnabled( true );
         m_pivotSparkMaxConfig.softLimit.reverseSoftLimit( 0.0 );
         m_pivotSparkMaxConfig.softLimit.reverseSoftLimitEnabled( true );
-        */
+
+        // Range: 0 - 68 Deg
 
         // Configure conversion factors: position conversion factor accounts for gear reduction.
         m_pivotSparkMaxConfig.encoder.positionConversionFactor( kPivotGearRatio * 360.0 );
@@ -76,8 +77,8 @@ public class AlgaePivot extends SubsystemBase
         // Configure PID parameters and output limits.`
         m_pivotSparkMaxConfig.closedLoop.pid(kP_pos, kI_pos, kD_pos);
         m_pivotSparkMaxConfig.closedLoop.outputRange(-1.0, 1.0);
-        m_pivotSparkMaxConfig.closedLoop.maxMotion.maxAcceleration( 6000.0 ); //1800.0 );
-        m_pivotSparkMaxConfig.closedLoop.maxMotion.maxVelocity( 6000.0 ); //900.0 );
+        m_pivotSparkMaxConfig.closedLoop.maxMotion.maxAcceleration( 8000.0 ); //1800.0 );
+        m_pivotSparkMaxConfig.closedLoop.maxMotion.maxVelocity( 8000.0 ); //900.0 );
 
         m_pivotSparkMax = new SparkMax(kPivotMotorCanId, MotorType.kBrushless);
         m_pivotSparkMax.configure(m_pivotSparkMaxConfig, null, null);
