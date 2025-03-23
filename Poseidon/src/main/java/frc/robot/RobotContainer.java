@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.algae_intake.AlgaeIntakeDutyCommand;
 import frc.robot.commands.algae_pivot.AlgaePivotPositionCommand;
+import frc.robot.commands.climb.ClimbDutyCommand;
 import frc.robot.commands.climb.ClimbPositionCommand;
 import frc.robot.commands.coral_intake.CoralIntakeDutyCommand;
 import frc.robot.commands.coral_pivot.CoralPivotPositionCommand;
@@ -155,9 +156,9 @@ public class RobotContainer
 
     // AlgaeIntake: Left and right triggers control intake/outtake speed.
     driverXbox.leftTrigger().whileTrue(new AlgaeIntakeDutyCommand(
-        algaeIntake, () -> driverXbox.getLeftTriggerAxis() - driverXbox.getRightTriggerAxis()));
+        algaeIntake, () -> driverXbox.getLeftTriggerAxis() - driverXbox.getRightTriggerAxis() ) );
     driverXbox.rightTrigger().whileTrue(new AlgaeIntakeDutyCommand(
-        algaeIntake, () -> driverXbox.getLeftTriggerAxis() - driverXbox.getRightTriggerAxis()));    
+        algaeIntake, () -> driverXbox.getLeftTriggerAxis() - driverXbox.getRightTriggerAxis() ) );    
 
     driverXbox.povUp().onTrue( new InstantCommand( () -> {
         driveAngularVelocity.scaleTranslation( DriveDefaultSlow );
@@ -225,15 +226,15 @@ public class RobotContainer
     mechanicXbox.b().onTrue( new CoralPivotPositionCommand( coralPivot, 245.0 ) );
 
     // CoralIntake: X button for intake at constant speed, A button for outtake at constant speed.
-    mechanicXbox.leftTrigger().whileTrue( new CoralIntakeDutyCommand(
-      coralIntake, () -> mechanicXbox.getLeftTriggerAxis() * 0.5));
+    mechanicXbox.leftTrigger().whileTrue(
+      new CoralIntakeDutyCommand( coralIntake, () -> mechanicXbox.getLeftTriggerAxis() * 0.5 ) );
     
-    mechanicXbox.rightTrigger().whileTrue(new CoralIntakeDutyCommand(
-        coralIntake, () -> -mechanicXbox.getRightTriggerAxis() * 1.0));
+    mechanicXbox.rightTrigger().whileTrue(
+      new CoralIntakeDutyCommand( coralIntake, () -> -mechanicXbox.getRightTriggerAxis() * 1.0 ) );
 
     // Climb: Y button for climbing up, B button for lowering.
     climb.setDefaultCommand(
-      new frc.robot.commands.climb.ClimbDutyCommand(
+      new ClimbDutyCommand(
           climb, 
           () -> mechanicXbox.getRightY(),
           0.5
