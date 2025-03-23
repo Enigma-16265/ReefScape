@@ -68,10 +68,11 @@ public class CoralPivot extends SubsystemBase
         // Velocity conversion: raw rotations per second * 60 = RPM, then account for gear reduction.
         m_pivotSparkMaxConfig.encoder.velocityConversionFactor( kPivotGearRatio * 60.0 );
 
-        m_pivotSparkMaxConfig.softLimit.forwardSoftLimit( 244.0 );
-        m_pivotSparkMaxConfig.softLimit.forwardSoftLimitEnabled( true );
+        // Physical Range: [0,244] deg
         m_pivotSparkMaxConfig.softLimit.reverseSoftLimit( 0.0 );
         m_pivotSparkMaxConfig.softLimit.reverseSoftLimitEnabled( true );
+        m_pivotSparkMaxConfig.softLimit.forwardSoftLimit( 244.0 );
+        m_pivotSparkMaxConfig.softLimit.forwardSoftLimitEnabled( true );
         
         // Configure PID parameters and output limits.
         m_pivotSparkMaxConfig.closedLoop.pid(kP_pos, kI_pos, kD_pos);

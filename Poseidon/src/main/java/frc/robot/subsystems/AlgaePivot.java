@@ -61,18 +61,16 @@ public class AlgaePivot extends SubsystemBase
 
         m_pivotSparkMaxConfig.idleMode( IdleMode.kBrake );
 
-        
-        m_pivotSparkMaxConfig.softLimit.forwardSoftLimit( 50.0 );
-        m_pivotSparkMaxConfig.softLimit.forwardSoftLimitEnabled( true );
-        m_pivotSparkMaxConfig.softLimit.reverseSoftLimit( 0.0 );
-        m_pivotSparkMaxConfig.softLimit.reverseSoftLimitEnabled( true );
-
-        // Range: 0 - 68 Deg
-
         // Configure conversion factors: position conversion factor accounts for gear reduction.
         m_pivotSparkMaxConfig.encoder.positionConversionFactor( kPivotGearRatio * 360.0 );
         // Velocity conversion: raw rotations per second * 60 = RPM, then account for gear reduction.
         m_pivotSparkMaxConfig.encoder.velocityConversionFactor( kPivotGearRatio * 60.0 );
+
+        // Physical Range: [0, 68] deg
+        m_pivotSparkMaxConfig.softLimit.reverseSoftLimit( 0.0 );
+        m_pivotSparkMaxConfig.softLimit.reverseSoftLimitEnabled( true );
+        m_pivotSparkMaxConfig.softLimit.forwardSoftLimit( 50.0 );
+        m_pivotSparkMaxConfig.softLimit.forwardSoftLimitEnabled( true );
 
         // Configure PID parameters and output limits.`
         m_pivotSparkMaxConfig.closedLoop.pid(kP_pos, kI_pos, kD_pos);

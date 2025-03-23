@@ -63,9 +63,18 @@ public class Elevator extends SubsystemBase
     {
         // Create and configure the master config.
         m_elevatorMasterConfig = new SparkFlexConfig();
+
         m_elevatorMasterConfig.idleMode( IdleMode.kBrake );
+
         m_elevatorMasterConfig.encoder.positionConversionFactor( kElevatorGearRatio * 33.02 ); // 13 in. per sproke rotation
         m_elevatorMasterConfig.encoder.velocityConversionFactor( ( kElevatorGearRatio * 33.02 ) / 60.0 );
+
+        // Physical Range: [0, 170] cm
+        m_elevatorMasterConfig.softLimit.reverseSoftLimit( 0.0 );
+        m_elevatorMasterConfig.softLimit.reverseSoftLimitEnabled( true );
+        m_elevatorMasterConfig.softLimit.forwardSoftLimit( 169.0 );
+        m_elevatorMasterConfig.softLimit.forwardSoftLimitEnabled( true );
+
         m_elevatorMasterConfig.closedLoop.pid(kP, kI, kD);
         m_elevatorMasterConfig.closedLoop.outputRange(-1.0, 1.0);
         m_elevatorMasterConfig.closedLoop.maxMotion.maxAcceleration( 25000 );
