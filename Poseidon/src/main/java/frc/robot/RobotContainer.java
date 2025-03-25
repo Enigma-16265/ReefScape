@@ -18,7 +18,9 @@ import frc.robot.commands.algae_intake.AlgaeIntakeDutyCommand;
 import frc.robot.commands.algae_pivot.AlgaePivotPositionCommand;
 import frc.robot.commands.algae_pivot.AlgaePivotPositionStopCommand;
 import frc.robot.commands.climb.ClimbDutyCommand;
+import frc.robot.commands.climb.ClimbDutyPositionCommand;
 import frc.robot.commands.climb.ClimbPositionCommand;
+import frc.robot.commands.climb.ClimbPositionStopCommand;
 import frc.robot.commands.coral_intake.CoralIntakeDutyCommand;
 import frc.robot.commands.coral_pivot.CoralPivotPositionCommand;
 import frc.robot.commands.elevator.ElevatorPositionCommand;
@@ -242,8 +244,8 @@ public class RobotContainer
       )
     );
 
-    mechanicXbox.leftBumper().onTrue( new ClimbPositionCommand( climb, 0 ) );
-    mechanicXbox.rightBumper().onTrue( new ClimbPositionCommand( climb, 20 ) );
+    mechanicXbox.leftBumper().onTrue( new ClimbDutyPositionCommand( climb, 0, 0.5, 0.5 ) );
+    mechanicXbox.rightBumper().onTrue( new ClimbDutyPositionCommand( climb, 803, 0.5, 0.5 ) );
 
   }
 

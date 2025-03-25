@@ -42,7 +42,7 @@ public class Climb extends SubsystemBase
     public static final double kCurrentThreshold = 20.0;
 
     // PID tuning parameters (to be tuned later)
-    private static final double kP = 0.0;
+    private static final double kP = 1.0;
     private static final double kI = 0.0;
     private static final double kD = 0.0;
 
@@ -66,9 +66,17 @@ public class Climb extends SubsystemBase
         m_climbSparkMaxConfig.encoder.positionConversionFactor( kClimbGearRatio * 360.0 );
         m_climbSparkMaxConfig.encoder.velocityConversionFactor( kClimbGearRatio * 60.0 );
 
+        // Physical Range: [0, 850] deg
+        m_climbSparkMaxConfig.softLimit.reverseSoftLimit( 0.0 );
+        m_climbSparkMaxConfig.softLimit.reverseSoftLimitEnabled( true );
+        m_climbSparkMaxConfig.softLimit.forwardSoftLimit( 850.0 );
+        m_climbSparkMaxConfig.softLimit.forwardSoftLimitEnabled( true );
+
         // Set PID parameters and output limits.
         m_climbSparkMaxConfig.closedLoop.pid(kP, kI, kD);
         m_climbSparkMaxConfig.closedLoop.outputRange(-1.0, 1.0);
+        m_climbSparkMaxConfig.closedLoop.maxMotion.maxAcceleration( 80000.0 );
+        m_climbSparkMaxConfig.closedLoop.maxMotion.maxVelocity( 80000.0 );  
 
         m_climbSparkMaxConfig.idleMode(IdleMode.kBrake);
 
@@ -171,7 +179,7 @@ public class Climb extends SubsystemBase
 
         cmdLog.publish( "position", position );
 
-        m_climbPIDController.setReference(targetPosition, ControlType.kPosition);
+        m_climbPIDController.setReference( targetPosition, ControlType.kMAXMotionPositionControl );
 
     }
 
