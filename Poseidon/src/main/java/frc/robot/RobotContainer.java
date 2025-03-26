@@ -43,7 +43,7 @@ import swervelib.SwerveInputStream;
 public class RobotContainer
 {
   static final double DriveDefaultScale = 0.8;
-  static final double DriveDefaultSlow  = 0.5;
+  static final double DriveDefaultSlow  = 0.2;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final         CommandXboxController driverXbox = new CommandXboxController(0);
@@ -120,7 +120,10 @@ public class RobotContainer
     configureBindings();
 
     DriverStation.silenceJoystickConnectionWarning(true);
-    NamedCommands.registerCommand("test", Commands.print("I EXIST"));
+    // NamedCommands.registerCommand( "Coral Pivot POS", new CoralPivotPositionCommand( coralPivot, 240.0 ) );
+    // NamedCommands.registerCommand( "Elevator POS", new ElevatorPositionCommand( elevator, 169.0 ) );
+    // NamedCommands.registerCommand( "Coral Outtake", new CoralIntakeDutyCommand( coralIntake, () -> -1.0 ) );
+
   }
 
   private void configureBindings()
@@ -322,7 +325,8 @@ public class RobotContainer
   public Command getAutonomousCommand()
   {
     // An example command will be run in autonomous
-    return drivebase.getAutonomousCommand("Test Auto");
+    return drivebase.getAutonomousCommand("Auto POS1 V1");
+
   }
 
   public void setMotorBrake(boolean brake)
