@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.algae_intake.AlgaeIntakeDutyCommand;
+import frc.robot.commands.algae_intake.AlgaeIntakeDutyTimedCommand;
 import frc.robot.commands.algae_pivot.AlgaePivotPositionCommand;
 import frc.robot.commands.algae_pivot.AlgaePivotPositionStopCommand;
 import frc.robot.commands.climb.ClimbDutyCommand;
@@ -123,6 +124,9 @@ public class RobotContainer
     // NamedCommands.registerCommand( "Coral Pivot POS", new CoralPivotPositionCommand( coralPivot, 240.0 ) );
     // NamedCommands.registerCommand( "Elevator POS", new ElevatorPositionCommand( elevator, 169.0 ) );
     // NamedCommands.registerCommand( "Coral Outtake", new CoralIntakeDutyCommand( coralIntake, () -> -1.0 ) );
+
+    NamedCommands.registerCommand( "AlgaePivotOut", new AlgaePivotPositionCommand( algaePivot, 47.0 ) );
+    NamedCommands.registerCommand( "AlgaeIntakeFull", new AlgaeIntakeDutyTimedCommand( algaeIntake, -1.0, 1.5 ) );
 
   }
 
@@ -325,7 +329,7 @@ public class RobotContainer
   public Command getAutonomousCommand()
   {
     // An example command will be run in autonomous
-    return drivebase.getAutonomousCommand("Auto POS1 V1");
+    return drivebase.getAutonomousCommand("Auto Simple Coral");
 
   }
 
