@@ -328,7 +328,7 @@ public class RobotContainer
     // An example command will be run in autonomous
     //return drivebase.getAutonomousCommand("Auto POS1 V1");
     //return new InstantCommand(() -> {});
-    return DriveForwardTimedCommand.create( drivebase, 1.0 );
+    return new DriveForwardTimedCommand( drivebase, -1.0, 3.5 );
   }
 
   public void setMotorBrake(boolean brake)
