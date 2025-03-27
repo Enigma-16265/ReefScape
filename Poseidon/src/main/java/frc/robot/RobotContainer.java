@@ -25,6 +25,7 @@ import frc.robot.commands.coral_intake.CoralIntakeDutyCommand;
 import frc.robot.commands.coral_pivot.CoralPivotPositionCommand;
 import frc.robot.commands.elevator.ElevatorPositionCommand;
 import frc.robot.commands.elevator.ElevatorPositionStopCommand;
+import frc.robot.commands.swervedrive.DriveForwardTimedCommand;
 import frc.robot.subsystems.AlgaeIntake;
 import frc.robot.subsystems.AlgaePivot;
 import frc.robot.subsystems.Climb;
@@ -325,8 +326,9 @@ public class RobotContainer
   public Command getAutonomousCommand()
   {
     // An example command will be run in autonomous
-    return drivebase.getAutonomousCommand("Auto POS1 V1");
-
+    //return drivebase.getAutonomousCommand("Auto POS1 V1");
+    //return new InstantCommand(() -> {});
+    return DriveForwardTimedCommand.create( drivebase, 1.0 );
   }
 
   public void setMotorBrake(boolean brake)
