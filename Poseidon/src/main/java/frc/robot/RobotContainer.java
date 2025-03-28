@@ -17,6 +17,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.algae_intake.AlgaeIntakeDutyCommand;
 import frc.robot.commands.algae_pivot.AlgaePivotPositionCommand;
 import frc.robot.commands.algae_pivot.AlgaePivotPositionStopCommand;
+import frc.robot.commands.auto.ComboAutoCommand;
 import frc.robot.commands.climb.ClimbDutyCommand;
 import frc.robot.commands.climb.ClimbDutyPositionCommand;
 import frc.robot.commands.climb.ClimbPositionCommand;
@@ -159,7 +160,7 @@ public class RobotContainer
     // AlgaePivot preset positions: 
     // Left bumper sets pivot to 25 revolutions, Right bumper sets pivot to 0.
     driverXbox.leftBumper().onTrue( new AlgaePivotPositionStopCommand( algaePivot, 0.0, 5.0 ) );
-    driverXbox.rightBumper().onTrue(new AlgaePivotPositionCommand( algaePivot, 47.0 ) );
+    driverXbox.rightBumper().onTrue( new AlgaePivotPositionCommand( algaePivot, 47.0 ) );
 
     // AlgaeIntake: Left and right triggers control intake/outtake speed.
     driverXbox.leftTrigger().whileTrue(new AlgaeIntakeDutyCommand(
@@ -328,7 +329,8 @@ public class RobotContainer
     // An example command will be run in autonomous
     //return drivebase.getAutonomousCommand("Auto POS1 V1");
     //return new InstantCommand(() -> {});
-    return new DriveForwardTimedCommand( drivebase, -1.0, 3.5 );
+    //return new DriveForwardTimedCommand( drivebase, -1.0, 3.5 );
+    return ComboAutoCommand.getInstance( drivebase, algaePivot );
   }
 
   public void setMotorBrake(boolean brake)
